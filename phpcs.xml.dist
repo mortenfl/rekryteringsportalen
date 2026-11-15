@@ -2,6 +2,7 @@
 <ruleset name="Rekryteringsportalen">
 	<description>WordPress Coding Standards for the Rekryteringsportalen theme and plugin.</description>
 	<file>plugins/rekryteringsportalen-core</file>
+	<file>plugins/rekryteringsportalen-xls-import</file>
 	<file>themes/rekryteringsportalen</file>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*/node_modules/*</exclude-pattern>

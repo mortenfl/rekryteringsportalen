@@ -216,15 +216,57 @@ final class RP_Importer {
 	}
 
 	/**
+	 * File extensions the importer accepts. Add-ons (e.g. Excel import) extend this list.
+	 *
+	 * @return string[]
+	 */
+	public static function extensions(): array {
+		return array_values( array_unique( (array) apply_filters( 'rp_import_extensions', array( 'csv', 'json', 'txt' ) ) ) );
+	}
+
+	/**
 	 * Parse a file by extension.
 	 *
-	 * @param string $path File path.
-	 * @param string $name Original file name (for extension detection).
-	 * @return array{headers:string[], rows:array<int, array<string,string>>}
+	 * Formats other than CSV/JSON are handled by the `rp_import_parse_file` filter, which receives
+	 * null, the path, the lowercase extension and the options, and returns {headers, rows} or a WP_Error.
+	 *
+	 * @param string               $path    File path.
+	 * @param string               $name    Original file name (for extension detection).
+	 * @param array<string, mixed> $options Parser options, e.g. ['sheet' => 'Blad1'].
+	 * @return array{headers:string[], rows:array<int, array<string,string>>, info?:string, error?:string}
 	 */
-	public static function parse_file( string $path, string $name = '' ): array {
+	public static function parse_file( string $path, string $name = '', array $options = array() ): array {
+		$ext = strtolower( pathinfo( '' !== $name ? $name : $path, PATHINFO_EXTENSION ) );
+
+		if ( ! in_array( $ext, array( 'csv', 'json', 'txt', '' ), true ) ) {
+			/**
+			 * Parse a non-CSV/JSON import file.
+			 *
+			 * @param array|WP_Error|null  $parsed  Null when nobody handled the file.
+			 * @param string               $path    Local file path.
+			 * @param string               $ext     Lowercase extension.
+			 * @param array<string, mixed> $options Options.
+			 */
+			$parsed = apply_filters( 'rp_import_parse_file', null, $path, $ext, $options );
+			if ( is_wp_error( $parsed ) ) {
+				return array(
+					'headers' => array(),
+					'rows'    => array(),
+					'error'   => $parsed->get_error_message(),
+				);
+			}
+			if ( is_array( $parsed ) ) {
+				return $parsed;
+			}
+			return array(
+				'headers' => array(),
+				'rows'    => array(),
+				/* translators: %s: file extension. */
+				'error'   => sprintf( 'Filformatet .%s stöds inte.', $ext ),
+			);
+		}
+
 		$content = (string) file_get_contents( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		$ext     = strtolower( pathinfo( '' !== $name ? $name : $path, PATHINFO_EXTENSION ) );
 		if ( 'json' === $ext || str_starts_with( ltrim( $content ), '[' ) || str_starts_with( ltrim( $content ), '{' ) ) {
 			return self::parse_json( $content );
 		}

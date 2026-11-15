@@ -86,37 +86,57 @@ final class RP_Admin_Import {
 		if ( ! current_user_can( self::CAP ) ) {
 			wp_die( 'Behörighet saknas.' );
 		}
-		$content = '';
+		$path    = '';
 		$name    = '';
-		// phpcs:disable WordPress.Security.ValidatedSanitizedInput -- raw file/CSV content is parsed and every value sanitized at import.
+		$cleanup = '';
+		$sheet   = isset( $_POST['rp_sheet'] ) ? sanitize_text_field( wp_unslash( $_POST['rp_sheet'] ) ) : '';
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput -- raw file content is parsed and every value sanitized at import.
 		if ( ! empty( $_FILES['rp_file']['tmp_name'] ) && is_uploaded_file( $_FILES['rp_file']['tmp_name'] ) ) {
 			$name = sanitize_file_name( (string) $_FILES['rp_file']['name'] );
-			$ext  = strtolower( pathinfo( $name, PATHINFO_EXTENSION ) );
-			if ( ! in_array( $ext, array( 'csv', 'json', 'txt' ), true ) ) {
-				wp_safe_redirect( self::url( '', array( 'rp_err' => 'type' ) ) );
-				exit;
-			}
-			$content = (string) file_get_contents( $_FILES['rp_file']['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			$path = (string) $_FILES['rp_file']['tmp_name'];
 		} elseif ( ! empty( $_POST['rp_url'] ) ) {
-			$url = esc_url_raw( wp_unslash( $_POST['rp_url'] ) );
-			$res = wp_safe_remote_get( $url, array( 'timeout' => 30 ) );
-			if ( is_wp_error( $res ) || 200 !== wp_remote_retrieve_response_code( $res ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			$url  = esc_url_raw( wp_unslash( $_POST['rp_url'] ) );
+			$name = sanitize_file_name( basename( (string) wp_parse_url( $url, PHP_URL_PATH ) ) );
+			$tmp  = download_url( $url, 60 );
+			if ( is_wp_error( $tmp ) ) {
 				wp_safe_redirect( self::url( '', array( 'rp_err' => 'url' ) ) );
 				exit;
 			}
-			$content = (string) wp_remote_retrieve_body( $res );
-			$name    = (string) wp_parse_url( $url, PHP_URL_PATH );
+			$path    = $tmp;
+			$cleanup = $tmp;
 		} elseif ( ! empty( $_POST['rp_paste'] ) ) {
-			$content = (string) wp_unslash( $_POST['rp_paste'] );
+			$path    = wp_tempnam( 'rp-import' );
+			$cleanup = $path;
 			$name    = 'inklistrat.csv';
+			file_put_contents( $path, (string) wp_unslash( $_POST['rp_paste'] ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 		}
 		// phpcs:enable
 
-		$trimmed = ltrim( $content );
-		$parsed  = ( str_starts_with( $trimmed, '[' ) || str_starts_with( $trimmed, '{' ) ) ? RP_Importer::parse_json( $content ) : RP_Importer::parse_csv( $content );
+		$ext = strtolower( pathinfo( $name, PATHINFO_EXTENSION ) );
+		if ( '' === $path || ( '' !== $ext && ! in_array( $ext, RP_Importer::extensions(), true ) ) ) {
+			if ( $cleanup ) {
+				wp_delete_file( $cleanup );
+			}
+			wp_safe_redirect( self::url( '', array( 'rp_err' => '' === $path ? 'empty' : 'type' ) ) );
+			exit;
+		}
+
+		$parsed = RP_Importer::parse_file( $path, $name, array( 'sheet' => $sheet ) );
+		if ( $cleanup ) {
+			wp_delete_file( $cleanup );
+		}
+		if ( ! empty( $parsed['error'] ) ) {
+			set_transient( self::key() . '_error', $parsed['error'], 5 * MINUTE_IN_SECONDS );
+			wp_safe_redirect( self::url( '', array( 'rp_err' => 'parse' ) ) );
+			exit;
+		}
 		if ( ! $parsed['rows'] ) {
 			wp_safe_redirect( self::url( '', array( 'rp_err' => 'empty' ) ) );
 			exit;
+		}
+		if ( ! empty( $parsed['info'] ) ) {
+			$name .= ' – ' . $parsed['info'];
 		}
 		self::save_state(
 			array(
@@ -221,7 +241,7 @@ final class RP_Admin_Import {
 		$step   = isset( $_GET['step'] ) ? sanitize_key( wp_unslash( $_GET['step'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$err    = isset( $_GET['rp_err'] ) ? sanitize_key( wp_unslash( $_GET['rp_err'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$errors = array(
-			'type'  => 'Endast CSV- och JSON-filer kan importeras.',
+			'type'  => 'Filformatet stöds inte. Tillåtna format: ' . implode( ', ', RP_Importer::extensions() ) . '.',
 			'url'   => 'Kunde inte hämta filen från URL:en.',
 			'empty' => 'Hittade inga rader i filen. Kontrollera att första raden innehåller kolumnnamn.',
 			'namn'  => 'Någon kolumn måste kopplas till fältet Namn.',
@@ -239,7 +259,10 @@ final class RP_Admin_Import {
 			echo '<li class="' . ( $k === $step ? 'is-current' : '' ) . '">' . esc_html( $label ) . '</li>';
 		}
 		echo '</ol>';
-		if ( isset( $errors[ $err ] ) ) {
+		if ( 'parse' === $err ) {
+			$errors['parse'] = (string) get_transient( self::key() . '_error' );
+		}
+		if ( ! empty( $errors[ $err ] ) ) {
 			echo '<div class="notice notice-error"><p>' . esc_html( $errors[ $err ] ) . '</p></div>';
 		}
 
@@ -266,7 +289,13 @@ final class RP_Admin_Import {
 				<input type="hidden" name="action" value="rp_import_upload">
 				<?php wp_nonce_field( 'rp_import_upload' ); ?>
 				<table class="form-table"><tbody>
-					<tr><th><label for="rp-file">Ladda upp fil</label></th><td><input type="file" id="rp-file" name="rp_file" accept=".csv,.json,.txt"><p class="description">CSV (semikolon, komma eller tab) eller JSON. Excel: Spara som → CSV UTF-8.</p></td></tr>
+					<tr><th><label for="rp-file">Ladda upp fil</label></th><td><input type="file" id="rp-file" name="rp_file" accept="<?php echo esc_attr( '.' . implode( ',.', RP_Importer::extensions() ) ); ?>"><p class="description"><?php echo esc_html( apply_filters( 'rp_import_file_help', 'CSV (semikolon, komma eller tab) eller JSON. Excel: Spara som → CSV UTF-8.' ) ); ?></p></td></tr>
+					<?php
+					/**
+					 * Extra fields on the upload step (e.g. sheet selection for Excel files).
+					 */
+					do_action( 'rp_import_upload_fields' );
+					?>
 					<tr><th><label for="rp-url">…eller hämta från URL</label></th><td><input type="url" id="rp-url" name="rp_url" class="large-text" placeholder="https://exempel.se/foretag.csv"></td></tr>
 					<tr><th><label for="rp-paste">…eller klistra in</label></th><td><textarea id="rp-paste" name="rp_paste" rows="6" class="large-text code" placeholder="namn;orgnr;webbplats&#10;Exempel AB;556677-8899;exempel.se"></textarea></td></tr>
 				</tbody></table>

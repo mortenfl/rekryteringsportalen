@@ -6,6 +6,7 @@ Jämförelse- och omdömessajt för svenska rekryteringsföretag.
 |---|---|---|
 | **Plugin** | `plugins/rekryteringsportalen-core/` | All data och funktionalitet: företag, jobb, jobbportaler, omdömen, paket, leads, import, REST, WP-CLI |
 | **Tema** | `themes/rekryteringsportalen/` | Allt utseende: mallar, CSS, JS, `theme.json` |
+| **Tillägg: XLS-import** | `plugins/rekryteringsportalen-xls-import/` | Import av företag från Excel (.xlsx, .xls). Valfritt, kräver pluginet ovan |
 
 Funktionerna ligger i pluginet så att företag, omdömen och inställningar finns kvar om temat byts.
 
@@ -125,6 +126,20 @@ CSV-filen får använda semikolon, komma eller tab som avgränsare, och Excel-fi
 | `karriarsida_url`, `jobbfeed_url` | |
 | `paket`, `paket_giltigt_till`, `leads_epost` | paket1, 2027-12-31 |
 | `kalla` | var företaget upptäcktes, t.ex. `crawler` |
+
+### Excel (.xlsx och .xls)
+
+Aktivera tillägget **Rekryteringsportalen XLS-import**. Då tar importsidan och `wp rp import` även emot Excel-filer:
+
+- **Format:** både `.xlsx`/`.xlsm` (Excel 2007 och senare) och `.xls` (Excel 97–2003) fungerar, utan externa bibliotek.
+- **Flik:** välj flik med namn eller nummer. Lämnar du fältet tomt används första fliken som innehåller data.
+- **Rubriker och tomma celler:** första raden med innehåll blir kolumnrubriker. Tomma rader och kolumner hoppas över.
+- **Datum och tal:** datumceller blir `ÅÅÅÅ-MM-DD`, och långa tal som organisationsnummer behåller alla siffror.
+- **Mall:** det finns en färdig Excel-mall i [`data/import-mall.xlsx`](plugins/rekryteringsportalen-xls-import/data/import-mall.xlsx).
+
+```bash
+wp rp import foretag.xlsx --sheet="Företag" --status=draft --dry-run
+```
 
 ### 2. WP-CLI
 
@@ -285,6 +300,9 @@ wp rp seed-demo [--delete]
 | `rp_company_imported( $id, $action, $data )` | action | Efter import av ett företag |
 | `rp_package_includes_extended` | filter | Om Paket 2 även ska innehålla Paket 1 (standard `true`) |
 | `rp_output_schema` | filter | Stäng av JSON-LD |
+| `rp_import_extensions` | filter | Filändelser som importen tar emot |
+| `rp_import_parse_file( null, $path, $ext, $options )` | filter | Läs in ett nytt filformat. Returnera `{headers, rows}` eller `WP_Error` |
+| `rp_import_upload_fields` | action | Extra fält på importsidans första steg |
 | `rp_lead_retention_months` | filter | Hur länge leads sparas (standard 24) |
 
 ---
@@ -315,7 +333,7 @@ composer test
 composer lint
 ```
 
-Enhetstesterna täcker betygsberäkningen (snitt, Bayes, fördelning), dubblettkontrollen vid import och leads-matchningen. Dessa klasser saknar WordPress-beroenden och testas utan WordPress-installation.
+Enhetstesterna täcker betygsberäkningen (snitt, Bayes, fördelning), dubblettkontrollen vid import, leads-matchningen och Excel-läsarna. Excel-läsarna testas mot riktiga .xlsx- och .xls-filer i `plugins/rekryteringsportalen-xls-import/tests/fixtures/`. Dessa klasser saknar WordPress-beroenden och testas utan WordPress-installation.
 
 ## Antaganden och sådant som måste konfigureras manuellt
 

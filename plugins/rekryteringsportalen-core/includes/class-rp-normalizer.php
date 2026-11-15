@@ -115,7 +115,7 @@ final class RP_Normalizer {
 	}
 
 	/**
-	 * Date to Y-m-d, or '' when it cannot be parsed.
+	 * Date to Y-m-d, or '' when it cannot be parsed. Accepts Excel serial dates (1954–2119).
 	 *
 	 * @param string $value Raw date.
 	 */
@@ -123,6 +123,13 @@ final class RP_Normalizer {
 		$value = trim( $value );
 		if ( '' === $value ) {
 			return '';
+		}
+		// Excel serial date (days since 1899-12-30), e.g. "46387" or "46387.5".
+		if ( preg_match( '/^\d{4,5}(\.\d+)?$/', $value ) && (float) $value >= 20000 && (float) $value <= 80000 ) {
+			return gmdate( 'Y-m-d', (int) round( ( (float) $value - 25569 ) * 86400 ) );
+		}
+		if ( ctype_digit( $value ) ) {
+			return ''; // A bare number such as "2010" is not a date (strtotime would read it as 20:10 today).
 		}
 		$ts = strtotime( $value );
 		return false === $ts ? '' : gmdate( 'Y-m-d', $ts );

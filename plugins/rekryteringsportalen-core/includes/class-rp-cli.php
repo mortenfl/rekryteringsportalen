@@ -36,6 +36,9 @@ class RP_CLI {
 	 * [--dry-run]
 	 * : Show what would happen without saving.
 	 *
+	 * [--sheet=<sheet>]
+	 * : Excel only (requires the XLS import add-on): sheet name or number. Default: first sheet with data.
+	 *
 	 * ## EXAMPLES
 	 *
 	 *     wp rp import foretag.csv --status=draft --dry-run
@@ -49,7 +52,13 @@ class RP_CLI {
 		if ( ! is_readable( $file ) ) {
 			WP_CLI::error( "Kan inte läsa filen: $file" );
 		}
-		$parsed  = RP_Importer::parse_file( $file );
+		$parsed = RP_Importer::parse_file( $file, basename( $file ), array( 'sheet' => $assoc_args['sheet'] ?? '' ) );
+		if ( ! empty( $parsed['error'] ) ) {
+			WP_CLI::error( $parsed['error'] );
+		}
+		if ( ! empty( $parsed['info'] ) ) {
+			WP_CLI::log( $parsed['info'] );
+		}
 		$mapping = RP_Importer::guess_mapping( $parsed['headers'] );
 		$ignored = array_keys( array_filter( $mapping, static fn( $v ) => '' === $v ) );
 		if ( $ignored ) {

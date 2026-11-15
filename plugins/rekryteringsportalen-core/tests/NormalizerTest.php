@@ -88,5 +88,8 @@ final class NormalizerTest extends TestCase {
 		$this->assertSame( '2027-01-31', RP_Normalizer::date( '2027-01-31' ) );
 		$this->assertSame( '', RP_Normalizer::date( 'inte ett datum' ) );
 		$this->assertSame( '', RP_Normalizer::date( '' ) );
+		$this->assertSame( '', RP_Normalizer::date( '2010' ) );
+		$this->assertSame( '2026-12-31', RP_Normalizer::date( '46387' ), 'Excel serial date' );
+		$this->assertSame( '2027-01-31', RP_Normalizer::date( '31 January 2027' ) );
 	}
 }

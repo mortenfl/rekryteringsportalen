@@ -6,6 +6,7 @@
 	<testsuites>
 		<testsuite name="rekryteringsportalen">
 			<directory>plugins/rekryteringsportalen-core/tests</directory>
+			<directory>plugins/rekryteringsportalen-xls-import/tests</directory>
 		</testsuite>
 	</testsuites>
 </phpunit>
