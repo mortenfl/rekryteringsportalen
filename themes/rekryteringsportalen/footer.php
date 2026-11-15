@@ -22,7 +22,7 @@ $rp_url = static function ( string $slug ): string {
 			<h2 class="site-footer__title"><?php esc_html_e( 'Utforska', 'rekryteringsportalen' ); ?></h2>
 			<ul>
 				<li><a href="<?php echo esc_url( home_url( '/foretag/' ) ); ?>">Alla rekryteringsföretag</a></li>
-				<li><a href="<?php echo esc_url( $rp_url( 'topplistor' ) ); ?>">Topp 10 och botten 10</a></li>
+				<li><a href="<?php echo esc_url( $rp_url( 'topplistor' ) ); ?>">Topp 10</a></li>
 				<li><a href="<?php echo esc_url( home_url( '/jobb/' ) ); ?>">Lediga jobb</a></li>
 				<li><a href="<?php echo esc_url( home_url( '/jobbportaler/' ) ); ?>">Jobbportaler</a></li>
 			</ul>

@@ -60,21 +60,14 @@ while ( have_posts() ) :
 			<noscript><p><?php esc_html_e( 'Välj kategori via länkarna på respektive tjänst-, bransch- eller regionsida.', 'rekryteringsportalen' ); ?></p></noscript>
 		</nav>
 
-		<div class="toplists">
-			<section class="toplist-card toplist-card--top">
-				<h2><?php echo rp_icon( 'trophy' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> <?php esc_html_e( 'Topp 10', 'rekryteringsportalen' ); ?></h2>
-				<p class="toplist-card__sub"><?php esc_html_e( 'Högst viktat betyg', 'rekryteringsportalen' ); ?></p>
-				<?php echo rp_toplist( 'topp', 10, $rp_tax, $rp_slug ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-			</section>
-			<section class="toplist-card toplist-card--bottom">
-				<h2><?php esc_html_e( 'Botten 10', 'rekryteringsportalen' ); ?></h2>
-				<p class="toplist-card__sub"><?php esc_html_e( 'Lägst viktat betyg', 'rekryteringsportalen' ); ?></p>
-				<?php echo rp_toplist( 'botten', 10, $rp_tax, $rp_slug ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-			</section>
-		</div>
+		<section class="toplist-card">
+			<h2><?php echo rp_icon( 'trophy' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> <?php esc_html_e( 'Topp 10', 'rekryteringsportalen' ); ?></h2>
+			<p class="toplist-card__sub"><?php esc_html_e( 'Högst viktat betyg', 'rekryteringsportalen' ); ?></p>
+			<?php echo rp_toplist( 10, $rp_tax, $rp_slug, false, true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		</section>
 
 		<aside class="rp-info">
-			<h2><?php esc_html_e( 'Så räknas listorna', 'rekryteringsportalen' ); ?></h2>
+			<h2><?php esc_html_e( 'Så räknas listan', 'rekryteringsportalen' ); ?></h2>
 			<p>
 				<?php
 				echo esc_html(

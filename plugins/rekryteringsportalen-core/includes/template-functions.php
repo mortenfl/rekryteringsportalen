@@ -306,20 +306,20 @@ if ( ! function_exists( 'rp_review_list' ) ) {
 
 if ( ! function_exists( 'rp_toplist' ) ) {
 	/**
-	 * Ranked list (top or bottom).
+	 * Ranked top list.
 	 *
-	 * @param string $type     topp|botten.
 	 * @param int    $limit    Count.
 	 * @param string $taxonomy Optional taxonomy.
 	 * @param string $term     Optional term slug.
-	 * @param bool   $compact  Compact variant (front page).
+	 * @param bool   $compact  Compact variant (front page, sidebar).
+	 * @param bool   $columns  Split into two columns on wide screens.
 	 */
-	function rp_toplist( string $type = 'topp', int $limit = 10, string $taxonomy = '', string $term = '', bool $compact = false ): string {
-		$posts = RP_Query::toplist( $type, $limit, $taxonomy, $term );
+	function rp_toplist( int $limit = 10, string $taxonomy = '', string $term = '', bool $compact = false, bool $columns = false ): string {
+		$posts = RP_Query::toplist( $limit, $taxonomy, $term );
 		if ( ! $posts ) {
 			return '<p class="rp-empty">Inga företag har ännu tillräckligt många omdömen (minst ' . (int) RP_Settings::get( 'min_omdomen' ) . ') för att komma med på listan.</p>';
 		}
-		$html = '<ol class="rp-toplist rp-toplist--' . esc_attr( $type ) . ( $compact ? ' rp-toplist--compact' : '' ) . '">';
+		$html = '<ol class="rp-toplist' . ( $compact ? ' rp-toplist--compact' : '' ) . ( $columns ? ' rp-toplist--columns' : '' ) . '">';
 		foreach ( $posts as $i => $p ) {
 			$html .= '<li class="rp-toplist__item"><span class="rp-toplist__rank" aria-hidden="true">' . (int) ( $i + 1 ) . '</span>'
 				. '<a class="rp-toplist__logo" href="' . esc_url( (string) get_permalink( $p ) ) . '" tabindex="-1" aria-hidden="true">' . rp_company_logo( $p->ID ) . '</a>'
@@ -336,14 +336,13 @@ if ( ! function_exists( 'rp_toplist' ) ) {
 }
 
 /**
- * [rp_topplista typ="topp|botten" antal="10" tjanst="" bransch="" region="" kompakt="0"]
+ * [rp_topplista antal="10" tjanst="" bransch="" region="" kompakt="0"]
  *
  * @param array<string,string>|string $atts Attributes.
  */
 function rp_shortcode_toplist( $atts ): string {
 	$atts = shortcode_atts(
 		array(
-			'typ'     => 'topp',
 			'antal'   => 10,
 			'tjanst'  => '',
 			'bransch' => '',
@@ -362,7 +361,7 @@ function rp_shortcode_toplist( $atts ): string {
 			break;
 		}
 	}
-	return rp_toplist( 'botten' === $atts['typ'] ? 'botten' : 'topp', max( 1, min( 50, (int) $atts['antal'] ) ), $tax, $term, '1' === (string) $atts['kompakt'] );
+	return rp_toplist( max( 1, min( 50, (int) $atts['antal'] ) ), $tax, $term, '1' === (string) $atts['kompakt'] );
 }
 add_shortcode( 'rp_topplista', 'rp_shortcode_toplist' );
 

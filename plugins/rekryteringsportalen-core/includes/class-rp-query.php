@@ -231,15 +231,14 @@ final class RP_Query {
 	}
 
 	/**
-	 * Top or bottom list using the Bayesian weighted rating. Sponsorship never affects placement.
+	 * Top list using the Bayesian weighted rating. Sponsorship never affects placement.
 	 *
-	 * @param string $type     'topp' or 'botten'.
 	 * @param int    $limit    Number of companies.
 	 * @param string $taxonomy Optional taxonomy filter.
 	 * @param string $term     Optional term slug.
 	 * @return WP_Post[]
 	 */
-	public static function toplist( string $type = 'topp', int $limit = 10, string $taxonomy = '', string $term = '' ): array {
+	public static function toplist( int $limit = 10, string $taxonomy = '', string $term = '' ): array {
 		$args = array(
 			'post_type'      => RP_Post_Types::COMPANY,
 			'post_status'    => 'publish',
@@ -257,15 +256,10 @@ final class RP_Query {
 					'type' => 'DECIMAL(6,4)',
 				),
 			),
-			'orderby'        => 'botten' === $type
-				? array(
-					'bayes_clause' => 'ASC',
-					'count_clause' => 'DESC',
-				)
-				: array(
-					'bayes_clause' => 'DESC',
-					'count_clause' => 'DESC',
-				),
+			'orderby'        => array(
+				'bayes_clause' => 'DESC',
+				'count_clause' => 'DESC',
+			),
 		);
 		if ( '' !== $taxonomy && '' !== $term && in_array( $taxonomy, array( RP_Post_Types::TAX_SERVICE, RP_Post_Types::TAX_INDUSTRY, RP_Post_Types::TAX_REGION ), true ) ) {
 			$args['tax_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query

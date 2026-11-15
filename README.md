@@ -47,11 +47,11 @@ wp rp seed-demo --delete
 
 | URL | Mall | Innehåll |
 |---|---|---|
-| `/` | `front-page.php` | Sök, populära tjänster, topp/botten 10, nya företag, senaste jobben, omdömen och jobbportaler |
+| `/` | `front-page.php` | Sök, populära tjänster, topp 10, nya företag, senaste jobben, omdömen och jobbportaler |
 | `/foretag/` | `archive-foretag.php` | Alla företag med filter för tjänst, bransch, region och lägsta betyg, fritextsök och sortering |
 | `/foretag/{namn}/` | `single-foretag.php` | Företagspresentationen. Layouten styrs av paketet |
 | `/tjanst/{x}/`, `/bransch/{x}/`, `/region/{x}/` | `taxonomy-*.php` | Landningssidor per tjänst, bransch och region |
-| `/topplistor/` | `page-topplistor.php` | Topp 10 och botten 10 |
+| `/topplistor/` | `page-topplistor.php` | Topp 10 |
 | `/topplistor/{tjanst\|bransch\|region}/{x}/` | samma | Filtrerade topplistor med egna, indexerbara URL:er |
 | `/jobb/` | `archive-jobb.php` | Lediga jobb med filter |
 | `/jobbportaler/` | `archive-jobbportal.php` | Jobbportaler grupperade per kategori |
@@ -186,9 +186,9 @@ Bara företag med minst `m` godkända omdömen kommer med. **Paket påverkar ald
 Shortcode för att visa en lista var som helst:
 
 ```
-[rp_topplista typ="topp" antal="10"]
-[rp_topplista typ="botten" antal="10" bransch="it-tech"]
-[rp_topplista typ="topp" antal="5" region="stockholm" kompakt="1"]
+[rp_topplista antal="10"]
+[rp_topplista antal="10" bransch="it-tech"]
+[rp_topplista antal="5" region="stockholm" kompakt="1"]
 ```
 
 ## Lediga jobb
@@ -233,7 +233,7 @@ add_action( 'rp_paketorder_created', function ( int $order_id ) { /* skapa faktu
 
 | Shortcode | Beskrivning |
 |---|---|
-| `[rp_topplista typ="topp\|botten" antal="10" tjanst="" bransch="" region="" kompakt="0"]` | Topp- eller bottenlista |
+| `[rp_topplista antal="10" tjanst="" bransch="" region="" kompakt="0"]` | Topplista |
 | `[rp_jobbportaler kategori="" antal="-1"]` | Jobbportaler |
 | `[rp_paket]` | De två paketkorten |
 | `[rp_paketformular paket="paket1"]` | Beställningsformulär |
@@ -244,7 +244,7 @@ add_action( 'rp_paketorder_created', function ( int $order_id ) { /* skapa faktu
 | Metod | Route | Behörighet |
 |---|---|---|
 | GET | `foretag?tjanst=&bransch=&region=&min_betyg=&q=&sortera=&page=` | Publik |
-| GET | `topplista?typ=topp&antal=10&taxonomi=bransch&term=it-tech` | Publik |
+| GET | `topplista?antal=10&taxonomi=bransch&term=it-tech` | Publik |
 | POST | `import?status=draft&overwrite=false&dry_run=false` | `manage_options` |
 | POST | `foretag/{id}/paket` | `edit_post` |
 | POST | `klick/{id}` | Publik (räknar klick på jobbportaler) |

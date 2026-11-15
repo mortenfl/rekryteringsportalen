@@ -27,7 +27,7 @@ $rp_rows = array(
 	array( 'Leads från företag som ska rekrytera', false, false, true ),
 );
 $rp_faq  = array(
-	'Kan vi köpa en bättre placering i topplistorna?' => 'Nej. Topplistorna och betygen bygger enbart på omdömen. Annonspaket ger en bättre presentation och synlighet, men påverkar aldrig betyget eller placeringen i topp- och bottenlistorna.',
+	'Kan vi köpa en bättre placering i topplistorna?' => 'Nej. Topplistorna och betygen bygger enbart på omdömen. Annonspaket ger en bättre presentation och synlighet, men påverkar aldrig betyget eller placeringen i topplistorna.',
 	'Kan vi ta bort negativa omdömen?'                => 'Nej, men med ett paket kan ni svara publikt på omdömen. Omdömen som bryter mot våra riktlinjer kan rapporteras och granskas av oss.',
 	'Hur fungerar leads?'                             => sprintf( 'Företag som ska rekrytera beskriver sitt behov. Förfrågan skickas till max %d rekryteringsföretag med Paket 2 som matchar bransch och region. Leads fördelas rättvist mellan partners.', (int) $rp_s['max_lead_mottagare'] ),
 	'Vad är bindningstiden?'                          => 'Paketen löper månadsvis. Kontakta oss för årsavtal.',

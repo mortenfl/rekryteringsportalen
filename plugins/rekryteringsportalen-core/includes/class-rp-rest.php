@@ -69,11 +69,6 @@ final class RP_Rest {
 				'callback'            => array( self::class, 'toplist' ),
 				'permission_callback' => '__return_true',
 				'args'                => array(
-					'typ'      => array(
-						'type'    => 'string',
-						'enum'    => array( 'topp', 'botten' ),
-						'default' => 'topp',
-					),
 					'antal'    => array(
 						'type'    => 'integer',
 						'minimum' => 1,
@@ -228,7 +223,7 @@ final class RP_Rest {
 	 * @param WP_REST_Request $r Request.
 	 */
 	public static function toplist( WP_REST_Request $r ): WP_REST_Response {
-		$posts = RP_Query::toplist( (string) $r['typ'], (int) $r['antal'], (string) $r['taxonomi'], sanitize_title( (string) $r['term'] ) );
+		$posts = RP_Query::toplist( (int) $r['antal'], (string) $r['taxonomi'], sanitize_title( (string) $r['term'] ) );
 		$out   = array();
 		foreach ( $posts as $i => $p ) {
 			$out[] = array(

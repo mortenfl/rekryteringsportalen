@@ -87,21 +87,12 @@ endwhile;
 
 <section class="section">
 	<div class="container">
-		<div class="toplists">
-			<div class="toplist-card toplist-card--top">
-				<div class="section-head">
-					<h2><?php echo rp_icon( 'trophy' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> <?php esc_html_e( 'Topp 10', 'rekryteringsportalen' ); ?></h2>
-					<a href="<?php echo esc_url( rp_page_url( 'topplistor' ) ); ?>"><?php esc_html_e( 'Alla topplistor →', 'rekryteringsportalen' ); ?></a>
-				</div>
-				<?php echo rp_toplist( 'topp', 10, '', '', true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		<div class="toplist-card">
+			<div class="section-head">
+				<h2><?php echo rp_icon( 'trophy' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> <?php esc_html_e( 'Topp 10', 'rekryteringsportalen' ); ?></h2>
+				<a href="<?php echo esc_url( rp_page_url( 'topplistor' ) ); ?>"><?php esc_html_e( 'Topplistor per tjänst, bransch och region →', 'rekryteringsportalen' ); ?></a>
 			</div>
-			<div class="toplist-card toplist-card--bottom">
-				<div class="section-head">
-					<h2><?php esc_html_e( 'Botten 10', 'rekryteringsportalen' ); ?></h2>
-					<a href="<?php echo esc_url( rp_page_url( 'sa-fungerar-betygen' ) ); ?>"><?php esc_html_e( 'Så räknas betygen', 'rekryteringsportalen' ); ?></a>
-				</div>
-				<?php echo rp_toplist( 'botten', 10, '', '', true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-			</div>
+			<?php echo rp_toplist( 10, '', '', true, true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</div>
 	</div>
 </section>

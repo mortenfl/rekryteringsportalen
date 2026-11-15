@@ -36,7 +36,7 @@ while ( have_posts() ) :
 			</div>
 			<div class="side-card">
 				<h2 class="side-card__title"><?php esc_html_e( 'Högst betyg just nu', 'rekryteringsportalen' ); ?></h2>
-				<?php echo rp_toplist( 'topp', 5, '', '', true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<?php echo rp_toplist( 5, '', '', true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 		</aside>
 	</div>

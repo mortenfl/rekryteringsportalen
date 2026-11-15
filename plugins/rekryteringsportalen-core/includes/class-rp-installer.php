@@ -154,7 +154,7 @@ final class RP_Installer {
 		return array(
 			'topplistor'          => array(
 				'title'   => 'Topplistor',
-				'content' => '<!-- wp:paragraph --><p>Här ser du de rekryteringsföretag som fått bäst och sämst betyg av kandidater och kunder. Listorna uppdateras automatiskt när nya omdömen godkänns.</p><!-- /wp:paragraph -->',
+				'content' => '<!-- wp:paragraph --><p>Här ser du de rekryteringsföretag som fått bäst betyg av kandidater och kunder. Listan uppdateras automatiskt när nya omdömen godkänns.</p><!-- /wp:paragraph -->',
 			),
 			'hitta-rekryterare'   => array(
 				'title'   => 'Hitta rekryterare',
