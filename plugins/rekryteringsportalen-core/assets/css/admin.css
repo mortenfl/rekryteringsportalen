@@ -1,0 +1,42 @@
+/* Rekryteringsportalen admin styles. */
+.rp-badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; line-height: 1.6; background: #eef1f5; color: #3c4858; white-space: nowrap; }
+.rp-badge--paket1 { background: #e3edfa; color: #1e4e8c; }
+.rp-badge--paket2 { background: #fdf0d9; color: #8a5a00; }
+.rp-badge--ny { background: #fde8e8; color: #9b1c1c; }
+.rp-badge--aktiv { background: #def7ec; color: #03543f; }
+.rp-badge--kontaktad { background: #e3edfa; color: #1e4e8c; }
+.column-rp_logo { width: 44px; }
+.column-rp_paket { width: 110px; }
+.column-rp_betyg { width: 140px; }
+.column-rp_omdomen, .column-rp_jobb { width: 80px; }
+.column-rp_logo .rp-logo { width: 36px; height: 36px; object-fit: contain; border-radius: 6px; }
+.rp-logo--placeholder { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 6px; font-weight: 700; color: #fff; background: hsl(var(--rp-logo-hue, 210) 45% 45%); }
+.rp-stars { display: inline-flex; gap: 1px; color: #f5a623; vertical-align: middle; }
+.rp-stars svg { width: 16px; height: 16px; }
+.rp-stars--lg svg { width: 22px; height: 22px; }
+.rp-rating { display: inline-flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.rp-rating__value { font-weight: 700; }
+.rp-rating__count { color: #646970; }
+.rp-pending { background: #d63638; color: #fff; border-radius: 999px; padding: 0 6px; font-size: 11px; }
+.rp-paket-radios label { display: block; margin: 6px 0; }
+.rp-group-title { margin: 1.5em 0 0; padding-bottom: 4px; border-bottom: 1px solid #dcdcde; }
+.rp-group-title:first-child { margin-top: .5em; }
+.rp-fields th { width: 220px; }
+.rp-warning { color: #b32d2e; font-weight: 600; }
+.rp-notice-inline { background: #f0f6fc; border-left: 4px solid #72aee6; padding: 8px 12px; }
+.rp-media__preview { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.rp-media__preview img { width: 72px; height: 72px; object-fit: cover; border-radius: 4px; border: 1px solid #dcdcde; }
+.rp-quick-edit .inline-edit-group, .rp-bulk-edit .inline-edit-group { display: block; margin-bottom: 6px; }
+.rp-dash-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0 0 12px; }
+.rp-dash-stats li { background: #f6f7f7; border-radius: 6px; padding: 10px; margin: 0; text-align: center; }
+.rp-dash-stats strong { display: block; font-size: 22px; }
+.rp-import-steps { display: flex; gap: 8px; margin: 16px 0; padding: 0; list-style: none; }
+.rp-import-steps li { padding: 6px 12px; border-radius: 999px; background: #f0f0f1; }
+.rp-import-steps li.is-current { background: #2271b1; color: #fff; }
+.rp-map-select--dupe { border-color: #d63638 !important; box-shadow: 0 0 0 1px #d63638; }
+.rp-preview-table td.rp-action-created { color: #00a32a; font-weight: 600; }
+.rp-preview-table td.rp-action-updated { color: #2271b1; font-weight: 600; }
+.rp-preview-table td.rp-action-skipped, .rp-preview-table td.rp-action-error { color: #b32d2e; font-weight: 600; }
+.rp-sample { color: #646970; font-size: 12px; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rp-card { background: #fff; border: 1px solid #c3c4c7; padding: 16px 20px; margin: 16px 0; max-width: 1100px; }
+.screen-reader-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }

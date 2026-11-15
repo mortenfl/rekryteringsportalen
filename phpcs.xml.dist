@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<ruleset name="Rekryteringsportalen">
+	<description>WordPress Coding Standards for the Rekryteringsportalen theme and plugin.</description>
+	<file>plugins/rekryteringsportalen-core</file>
+	<file>themes/rekryteringsportalen</file>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/tests/*</exclude-pattern>
+	<exclude-pattern>*.js</exclude-pattern>
+	<exclude-pattern>*.css</exclude-pattern>
+
+	<arg name="extensions" value="php"/>
+	<arg value="sp"/>
+	<config name="testVersion" value="8.1-"/>
+	<config name="minimum_wp_version" value="6.6"/>
+
+	<rule ref="WordPress-Extra">
+		<!-- Class files use the WordPress "class-" prefix convention; templates use WordPress names. -->
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+		<!-- Short array syntax is not used; long array syntax is enforced by WPCS. -->
+	</rule>
+	<rule ref="WordPress-Docs">
+		<exclude name="Squiz.Commenting.FileComment.MissingPackageTag"/>
+	</rule>
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="rekryteringsportalen"/>
+				<element value="rekryteringsportalen-core"/>
+			</property>
+		</properties>
+	</rule>
+	<!-- "rp" is the project prefix throughout; it is short but consistent. -->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.ShortPrefixPassed">
+		<severity>0</severity>
+	</rule>
+	<!-- Hook callbacks must accept the arguments WordPress passes even when unused. -->
+	<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter">
+		<severity>0</severity>
+	</rule>
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="rp"/>
+				<element value="RP"/>
+			</property>
+		</properties>
+	</rule>
+</ruleset>

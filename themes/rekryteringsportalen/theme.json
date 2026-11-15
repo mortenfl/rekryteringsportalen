@@ -1,0 +1,64 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.6/theme.json",
+	"version": 3,
+	"settings": {
+		"appearanceTools": true,
+		"layout": { "contentSize": "760px", "wideSize": "1200px" },
+		"color": {
+			"defaultPalette": false,
+			"defaultGradients": false,
+			"palette": [
+				{ "slug": "primary", "color": "#1E4E8C", "name": "Primär" },
+				{ "slug": "primary-dark", "color": "#153a69", "name": "Primär mörk" },
+				{ "slug": "primary-light", "color": "#e8f0fa", "name": "Primär ljus" },
+				{ "slug": "accent", "color": "#F5A623", "name": "Accent (stjärnor)" },
+				{ "slug": "success", "color": "#1a7f4b", "name": "Positiv" },
+				{ "slug": "danger", "color": "#b42318", "name": "Negativ" },
+				{ "slug": "ink", "color": "#1f2933", "name": "Text" },
+				{ "slug": "muted", "color": "#5b6776", "name": "Dämpad text" },
+				{ "slug": "border", "color": "#dfe4ea", "name": "Ram" },
+				{ "slug": "surface", "color": "#f5f7fa", "name": "Yta" },
+				{ "slug": "white", "color": "#ffffff", "name": "Vit" }
+			]
+		},
+		"typography": {
+			"fluid": true,
+			"fontFamilies": [
+				{
+					"slug": "system",
+					"name": "System",
+					"fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif"
+				}
+			],
+			"fontSizes": [
+				{ "slug": "small", "size": "0.875rem", "name": "Liten" },
+				{ "slug": "medium", "size": "1rem", "name": "Normal" },
+				{ "slug": "large", "size": "1.25rem", "name": "Stor" },
+				{ "slug": "x-large", "size": "clamp(1.5rem, 1.2rem + 1.2vw, 2rem)", "name": "Extra stor" },
+				{ "slug": "xx-large", "size": "clamp(2rem, 1.4rem + 2.4vw, 3rem)", "name": "Rubrik" }
+			]
+		},
+		"spacing": {
+			"units": [ "px", "rem", "%", "vw" ],
+			"spacingSizes": [
+				{ "slug": "20", "size": "0.5rem", "name": "XS" },
+				{ "slug": "30", "size": "1rem", "name": "S" },
+				{ "slug": "40", "size": "1.5rem", "name": "M" },
+				{ "slug": "50", "size": "2.5rem", "name": "L" },
+				{ "slug": "60", "size": "4rem", "name": "XL" }
+			]
+		}
+	},
+	"styles": {
+		"color": { "background": "var(--wp--preset--color--white)", "text": "var(--wp--preset--color--ink)" },
+		"typography": { "fontFamily": "var(--wp--preset--font-family--system)", "fontSize": "var(--wp--preset--font-size--medium)", "lineHeight": "1.6" },
+		"elements": {
+			"link": { "color": { "text": "var(--wp--preset--color--primary)" } },
+			"heading": { "typography": { "lineHeight": "1.2", "fontWeight": "700" }, "color": { "text": "var(--wp--preset--color--ink)" } },
+			"button": {
+				"color": { "background": "var(--wp--preset--color--primary)", "text": "var(--wp--preset--color--white)" },
+				"border": { "radius": "8px" }
+			}
+		}
+	}
+}
