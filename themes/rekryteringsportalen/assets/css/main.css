@@ -405,7 +405,7 @@ a.rp-chip--light:hover { background: rgb(255 255 255 / 24%); color: var(--rp-whi
 .rp-package__price span { font-size: 2.2rem; font-weight: 800; color: var(--rp-ink); }
 .rp-package__price small { display: block; font-size: .8rem; }
 .rp-package__desc { color: #3d4752; }
-.rp-package__features { list-style: none; padding: 0; margin: 0 0 1.5rem; display: grid; gap: .45rem; flex: 1; }
+.rp-package__features { list-style: none; padding: 0; margin: 0 0 1.5rem; display: grid; gap: .45rem; flex: 1; align-content: start; }
 .rp-package__features li { position: relative; padding-left: 1.7rem; }
 .rp-package__features li::before { content: ""; position: absolute; left: 0; top: .2rem; width: 1.1rem; height: 1.1rem; border-radius: 50%; background: #e8f6ee url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231a7f4b' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 5 5L20 7'/%3E%3C/svg%3E") center / 70% no-repeat; }
 .table-scroll { overflow-x: auto; border: 1px solid var(--rp-border); border-radius: var(--rp-radius); }

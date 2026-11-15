@@ -152,7 +152,7 @@ final class RP_Forms {
 		$privacy = get_privacy_policy_url();
 		$link    = $privacy ? '<a href="' . esc_url( $privacy ) . '" target="_blank">integritetspolicy</a>' : 'integritetspolicy';
 		$label   = str_replace( '{integritet}', $link, esc_html( $text ) );
-		return '<p class="rp-field rp-field--checkbox"><label><input type="checkbox" name="rp_samtycke" value="1" required> ' . $label . '</label></p>';
+		return '<p class="rp-field rp-field--checkbox"><label><input type="checkbox" name="rp_samtycke" value="1" required> <span>' . $label . '</span></label></p>';
 	}
 
 	/**
