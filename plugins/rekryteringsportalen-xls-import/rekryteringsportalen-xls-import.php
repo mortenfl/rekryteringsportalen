@@ -116,7 +116,7 @@ final class RP_Xls_Import {
 			<td>
 				<input type="text" id="rp-sheet" name="rp_sheet" class="regular-text" placeholder="T.ex. Blad1 eller 2">
 				<p class="description">Valfritt. Namn eller nummer på fliken. Tomt = första fliken som innehåller data.
-				<a href="<?php echo esc_url( RP_XLS_URL . 'data/import-mall.xlsx' ); ?>" download>Ladda ner Excel-mall</a>.</p>
+				Ladda ner mall: <a href="<?php echo esc_url( RP_XLS_URL . 'data/import-mall.xlsx' ); ?>" download>Excel (.xlsx)</a> eller <a href="<?php echo esc_url( RP_XLS_URL . 'data/import-mall.xls' ); ?>" download>Excel 97–2003 (.xls)</a>.</p>
 			</td>
 		</tr>
 		<?php

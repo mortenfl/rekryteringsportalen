@@ -135,7 +135,7 @@ Aktivera tillägget **Rekryteringsportalen XLS-import**. Då tar importsidan och
 - **Flik:** välj flik med namn eller nummer. Lämnar du fältet tomt används första fliken som innehåller data.
 - **Rubriker och tomma celler:** första raden med innehåll blir kolumnrubriker. Tomma rader och kolumner hoppas över.
 - **Datum och tal:** datumceller blir `ÅÅÅÅ-MM-DD`, och långa tal som organisationsnummer behåller alla siffror.
-- **Mall:** det finns en färdig Excel-mall i [`data/import-mall.xlsx`](plugins/rekryteringsportalen-xls-import/data/import-mall.xlsx).
+- **Mall:** det finns färdiga Excel-mallar i [`data/import-mall.xlsx`](plugins/rekryteringsportalen-xls-import/data/import-mall.xlsx) och [`data/import-mall.xls`](plugins/rekryteringsportalen-xls-import/data/import-mall.xls).
 
 ```bash
 wp rp import foretag.xlsx --sheet="Företag" --status=draft --dry-run

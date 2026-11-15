@@ -19,7 +19,7 @@ Tillägg till Rekryteringsportalen Core. Gör att importen under Rekryteringsfö
 * Välj flik med namn eller nummer. Tomt = första fliken som innehåller data.
 * Samma kolumnkoppling, förhandsgranskning och dubblettkontroll som CSV-importen.
 
-En färdig mall finns i data/import-mall.xlsx (länkas även från importsidan).
+Färdiga mallar finns i data/import-mall.xlsx och data/import-mall.xls (länkas även från importsidan).
 
 == Installation ==
 

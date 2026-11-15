@@ -101,6 +101,14 @@ final class SpreadsheetTest extends TestCase {
 		$this->assertSame( '2027-12-31', $t['rows'][1]['paket_giltigt_till'] );
 	}
 
+	public function test_xls_template_matches_xlsx_template(): void {
+		$dir  = dirname( __DIR__ ) . '/data/';
+		$xls  = RP_Spreadsheet::read( $dir . 'import-mall.xls', 'xls' );
+		$xlsx = RP_Spreadsheet::read( $dir . 'import-mall.xlsx', 'xlsx' );
+		$this->assertSame( $xlsx['headers'], $xls['headers'] );
+		$this->assertSame( $xlsx['rows'], $xls['rows'] );
+	}
+
 	public function test_rejects_non_excel_files(): void {
 		$tmp = tempnam( sys_get_temp_dir(), 'rp' );
 		file_put_contents( $tmp, "namn;orgnr\nA;1\n" );
