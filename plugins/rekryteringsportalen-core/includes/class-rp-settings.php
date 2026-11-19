@@ -28,7 +28,7 @@ final class RP_Settings {
 			'beskrivning_paket1' => 'En utökad företagspresentation med bilder, video, team, kundcase, kontaktformulär och möjlighet att svara på omdömen.',
 			'beskrivning_paket2' => 'Allt i paket 1, plus förfrågningar (leads) från företag som ska rekrytera inom er bransch och region.',
 			'notis_epost'        => '',
-			'krav_bekraftelse'   => 1,
+			'krav_epost'         => 0,
 			'lyft_sponsrade'     => 1,
 			'omdomen_per_timme'  => 3,
 		);

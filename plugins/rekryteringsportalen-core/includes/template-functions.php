@@ -234,7 +234,9 @@ if ( ! function_exists( 'rp_review_form' ) ) {
 		}
 		$html      .= '</select></p>';
 		$html      .= '<p class="rp-field"><label for="rp-namn">Namn eller signatur</label><input id="rp-namn" name="rp_namn" type="text" maxlength="60" autocomplete="nickname" placeholder="Visas publikt – lämna tomt för Anonym"></p>';
-		$html      .= '<p class="rp-field rp-field--wide"><label for="rp-epost">E-post *</label><input id="rp-epost" name="rp_epost" type="email" required autocomplete="email"><span class="rp-field__help">Visas aldrig publikt. Vi skickar en länk för att bekräfta ditt omdöme.</span></p>';
+		$html      .= RP_Settings::get( 'krav_epost' )
+			? '<p class="rp-field rp-field--wide"><label for="rp-epost">E-post *</label><input id="rp-epost" name="rp_epost" type="email" required autocomplete="email"><span class="rp-field__help">Visas aldrig publikt. Vi skickar en länk för att bekräfta ditt omdöme.</span></p>'
+			: '<p class="rp-field rp-field--wide"><label for="rp-epost">E-post <span class="rp-optional">(valfritt)</span></label><input id="rp-epost" name="rp_epost" type="email" autocomplete="email"><span class="rp-field__help">Visas aldrig publikt. Används bara om vi behöver nå dig om omdömet.</span></p>';
 		$html      .= '</div>';
 		$guidelines = rp_page_url( 'riktlinjer-omdomen' );
 		$html      .= RP_Forms::consent_field( 'Jag har läst riktlinjerna och godkänner att omdömet publiceras och att mina uppgifter behandlas enligt {integritet}. *' );

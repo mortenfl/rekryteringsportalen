@@ -186,7 +186,7 @@ final class RP_Privacy {
 		if ( ! function_exists( 'wp_add_privacy_policy_content' ) ) {
 			return;
 		}
-		$text = '<h2>Omdömen</h2><p>När du lämnar ett omdöme sparar vi ditt betyg, din kommentar, det namn du anger, din roll och din e-postadress. E-postadressen visas aldrig publikt och används för att bekräfta omdömet och förhindra flera omdömen från samma person. Vi sparar inte din IP-adress.</p>'
+		$text = '<h2>Omdömen</h2><p>När du lämnar ett omdöme sparar vi ditt betyg, din kommentar, det namn du anger, din roll och – om du anger den – din e-postadress. E-postadressen är frivillig, visas aldrig publikt och används bara om vi behöver nå dig om omdömet. Vi sparar inte din IP-adress. För att förhindra flera omdömen från samma besökare sparar vi en saltad kontrollsumma (hash) av IP-adressen i 90 dagar. Den kan inte räknas tillbaka till adressen utan webbplatsens hemliga nyckel och raderas automatiskt.</p>'
 			. '<h2>Rekryteringsförfrågningar (leads)</h2><p>När du skickar en förfrågan via "Hitta rekryterare" delas dina uppgifter med upp till tre rekryteringsföretag som matchar din bransch och region. Förfrågningar raderas automatiskt efter 24 månader.</p>'
 			. '<h2>Paketbeställningar</h2><p>Uppgifter som lämnas vid beställning av annonspaket används för att hantera beställningen och fakturering.</p>';
 		wp_add_privacy_policy_content( 'Rekryteringsportalen', wp_kses_post( $text ) );

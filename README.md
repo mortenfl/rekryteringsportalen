@@ -171,15 +171,18 @@ Parametrarna `dry_run=true` och `overwrite=true` stöds.
 
 - **1–5 stjärnor, där 1 är sämst.** Kommentaren är obligatorisk och måste vara minst 20 tecken.
 - Omdömen sparas som WordPress-kommentarer (`comment_type = rp_omdome`) med betyget i meta-fältet `rp_betyg`. Därför fungerar vanlig moderering, Akismet, export och radering.
-- Flödet ser ut så här:
-  1. Besökaren skickar formuläret.
-  2. Hen får ett mejl med en bekräftelselänk (kan stängas av i inställningarna).
-  3. Omdömet väntar på granskning under *Kommentarer*.
-  4. När det godkänns publiceras det och snittbetyget räknas om.
-- Ett omdöme per e-postadress och företag. Formuläret har honeypot, nonce och en gräns för antal inskick per IP-adress och timme. IP-adresser sparas aldrig, bara en saltad hash som tillfälligt används för gränsen.
+- **E-post är valfritt.** Flödet ser ut så här:
+  1. Besökaren skickar formuläret, med eller utan e-post.
+  2. Omdömet väntar på granskning under *Kommentarer*.
+  3. När det godkänns publiceras det och snittbetyget räknas om.
+
+  Vill du hellre kräva e-post och en bekräftelselänk, bocka i *Kräv e-post och bekräftelse via e-postlänk* under *Inställningar → Rekryteringsportalen*.
+- **Ett omdöme per besökare och företag inom 90 dagar.** Kontrollen görs på en saltad hash av IP-adressen (och på e-postadressen om den anges). Formuläret har dessutom honeypot, nonce och en gräns för antal inskick per IP-adress och timme. IP-adresser sparas aldrig i klartext, och hashen raderas efter 90 dagar.
+  - Står sajten bakom Cloudflare eller en annan proxy som döljer besökarens IP, koppla filtret `rp_client_ip` till rätt header (t.ex. `HTTP_CF_CONNECTING_IP`). Annars ser alla besökare ut att ha samma IP.
+  - Besökare som delar IP-adress, t.ex. på samma kontor, kan bara lämna ett omdöme per företag och 90 dagar.
 - Varje omdöme har knappen *Rapportera*. Rapporter mejlas till admin och syns på omdömet i admin.
 - **Företagets svar:** öppna omdömet i admin och fyll i *Svar från företaget*. Svaret visas bara för företag med Paket 1 eller 2.
-- Obekräftade omdömen raderas efter 7 dagar.
+- Om e-postbekräftelse är påslagen raderas obekräftade omdömen efter 7 dagar.
 
 ### Topplistorna
 
@@ -304,6 +307,7 @@ wp rp seed-demo [--delete]
 | `rp_import_parse_file( null, $path, $ext, $options )` | filter | Läs in ett nytt filformat. Returnera `{headers, rows}` eller `WP_Error` |
 | `rp_import_upload_fields` | action | Extra fält på importsidans första steg |
 | `rp_lead_retention_months` | filter | Hur länge leads sparas (standard 24) |
+| `rp_client_ip` | filter | Besökarens IP för spärrar, t.ex. bakom Cloudflare |
 
 ---
 

@@ -21,8 +21,8 @@ final class RP_Forms {
 		'review_sent'      => array( 'success', 'Tack! Vi har skickat ett mejl till dig. Klicka på länken i mejlet för att bekräfta ditt omdöme.' ),
 		'review_pending'   => array( 'success', 'Tack för ditt omdöme! Det publiceras så snart det har granskats.' ),
 		'review_confirmed' => array( 'success', 'Tack! Ditt omdöme är bekräftat och publiceras så snart det har granskats.' ),
-		'review_duplicate' => array( 'error', 'Du har redan lämnat ett omdöme om det här företaget.' ),
-		'review_invalid'   => array( 'error', 'Kontrollera formuläret: välj 1–5 stjärnor, skriv minst 20 tecken, ange en giltig e-post och godkänn villkoren.' ),
+		'review_duplicate' => array( 'error', 'Du har redan lämnat ett omdöme om det här företaget nyligen.' ),
+		'review_invalid'   => array( 'error', 'Kontrollera formuläret: välj 1–5 stjärnor, skriv minst 20 tecken, kontrollera e-postadressen och godkänn villkoren.' ),
 		'link_invalid'     => array( 'error', 'Länken är ogiltig eller har gått ut.' ),
 		'reported'         => array( 'success', 'Tack! Omdömet har rapporterats och granskas av oss.' ),
 		'lead_sent'        => array( 'success', 'Tack! Din förfrågan är skickad. Matchande rekryteringsföretag kontaktar dig inom kort.' ),
@@ -84,6 +84,13 @@ final class RP_Forms {
 	 */
 	public static function client_fingerprint(): string {
 		$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+		/**
+		 * Visitor IP used for rate limiting and the repeat-review check. Override when the site is
+		 * behind a proxy that hides the real address (e.g. use HTTP_CF_CONNECTING_IP behind Cloudflare).
+		 *
+		 * @param string $ip IP address.
+		 */
+		$ip = (string) apply_filters( 'rp_client_ip', $ip );
 		return hash_hmac( 'sha256', $ip, wp_salt( 'nonce' ) );
 	}
 

@@ -191,6 +191,7 @@ a.rp-chip--light:hover { background: rgb(255 255 255 / 24%); color: var(--rp-whi
 .rp-report textarea, .comment-form input[type="text"], .comment-form input[type="email"], .comment-form textarea { width: 100%; min-height: 44px; padding: .55rem .75rem; border: 1px solid #c4ccd6; border-radius: var(--rp-radius-sm); font: inherit; background: var(--rp-white); color: var(--rp-ink); }
 .rp-field textarea { min-height: 120px; resize: vertical; }
 .rp-field input:focus, .rp-field select:focus, .rp-field textarea:focus { border-color: var(--rp-primary); outline: 3px solid rgb(30 78 140 / 20%); outline-offset: 0; }
+.rp-optional { font-weight: 400; color: var(--rp-muted); }
 .rp-field__help { display: block; font-size: .85rem; color: var(--rp-muted); margin-top: .3rem; }
 .rp-field--checkbox label { display: flex; gap: .55rem; align-items: flex-start; font-weight: 400; font-size: .9rem; }
 .rp-field--checkbox input { width: 20px; height: 20px; margin-top: .15rem; flex: none; accent-color: var(--rp-primary); }

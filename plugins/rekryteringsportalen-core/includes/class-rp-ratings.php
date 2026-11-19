@@ -18,6 +18,11 @@ final class RP_Ratings {
 	public const MAX_LENGTH  = 3000;
 
 	/**
+	 * Days during which the same visitor cannot review the same company again.
+	 */
+	public const REPEAT_DAYS = 90;
+
+	/**
 	 * Hooks.
 	 */
 	public static function init(): void {
@@ -32,6 +37,7 @@ final class RP_Ratings {
 		add_action( 'deleted_comment', array( self::class, 'on_deleted' ), 10, 2 );
 		add_action( 'rp_recalc_bayes', array( self::class, 'recalc_all' ) );
 		add_action( 'rp_daily', array( self::class, 'purge_unconfirmed' ) );
+		add_action( 'rp_daily', array( self::class, 'purge_fingerprints' ) );
 
 		// Block the generic comment form on companies – reviews must go through our validated handler.
 		add_filter( 'comments_open', array( self::class, 'close_generic_comments' ), 10, 2 );
@@ -93,16 +99,21 @@ final class RP_Ratings {
 		}
 		$back = get_permalink( $post_id );
 
+		// E-mail is optional unless the admin requires it (then a confirmation link is sent).
+		$confirm   = (bool) RP_Settings::get( 'krav_epost' );
+		$raw_email = trim( RP_Forms::post( 'rp_epost' ) );
+		$email_ok  = '' === $raw_email ? ! $confirm : (bool) is_email( $email );
+
 		$length = mb_strlen( $text );
-		if ( ! RP_Rating_Math::is_valid( $rating ) || $length < self::MIN_LENGTH || $length > self::MAX_LENGTH || ! is_email( $email ) || ! $consent ) {
+		if ( ! RP_Rating_Math::is_valid( $rating ) || $length < self::MIN_LENGTH || $length > self::MAX_LENGTH || ! $email_ok || ! $consent ) {
 			RP_Forms::redirect( 'review_invalid', $back, 'betygsatt' );
 		}
-		if ( self::has_reviewed( $post_id, $email ) ) {
+
+		$fingerprint = RP_Forms::client_fingerprint();
+		if ( ( '' !== $email && self::has_reviewed( $post_id, $email ) ) || self::has_reviewed_recently( $post_id, $fingerprint ) ) {
 			RP_Forms::redirect( 'review_duplicate', $back, 'betygsatt' );
 		}
-
-		$confirm = (bool) RP_Settings::get( 'krav_bekraftelse' );
-		$data    = array(
+		$data = array(
 			'comment_post_ID'      => $post_id,
 			'comment_author'       => '' !== $name ? mb_substr( $name, 0, 60 ) : 'Anonym',
 			'comment_author_email' => $email,
@@ -132,6 +143,7 @@ final class RP_Ratings {
 			RP_Forms::redirect( 'spam', $back );
 		}
 		add_comment_meta( $comment_id, 'rp_betyg', $rating, true );
+		add_comment_meta( $comment_id, 'rp_fp', $fingerprint, true ); // Salted hash, deleted after REPEAT_DAYS.
 		if ( isset( self::roles()[ $role ] ) ) {
 			add_comment_meta( $comment_id, 'rp_roll', $role, true );
 		}
@@ -166,6 +178,41 @@ final class RP_Ratings {
 			)
 		);
 		return $count > 0;
+	}
+
+	/**
+	 * Whether the same visitor (salted IP hash) reviewed the company within REPEAT_DAYS.
+	 *
+	 * @param int    $post_id     Company.
+	 * @param string $fingerprint Fingerprint from RP_Forms::client_fingerprint().
+	 */
+	public static function has_reviewed_recently( int $post_id, string $fingerprint ): bool {
+		global $wpdb;
+		$count = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			$wpdb->prepare(
+				"SELECT COUNT(*) FROM {$wpdb->comments} c INNER JOIN {$wpdb->commentmeta} cm ON cm.comment_id = c.comment_ID AND cm.meta_key = 'rp_fp'
+				WHERE c.comment_post_ID = %d AND c.comment_type = %s AND cm.meta_value = %s AND c.comment_approved NOT IN ('trash', 'spam') AND c.comment_date_gmt > %s",
+				$post_id,
+				self::TYPE,
+				$fingerprint,
+				gmdate( 'Y-m-d H:i:s', time() - self::REPEAT_DAYS * DAY_IN_SECONDS )
+			)
+		);
+		return $count > 0;
+	}
+
+	/**
+	 * Delete visitor fingerprints older than REPEAT_DAYS (they are only needed for the repeat check).
+	 */
+	public static function purge_fingerprints(): void {
+		global $wpdb;
+		$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			$wpdb->prepare(
+				"DELETE cm FROM {$wpdb->commentmeta} cm INNER JOIN {$wpdb->comments} c ON c.comment_ID = cm.comment_id
+				WHERE cm.meta_key = 'rp_fp' AND c.comment_date_gmt < %s",
+				gmdate( 'Y-m-d H:i:s', time() - self::REPEAT_DAYS * DAY_IN_SECONDS )
+			)
+		);
 	}
 
 	/**

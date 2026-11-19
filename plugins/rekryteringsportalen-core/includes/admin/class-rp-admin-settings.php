@@ -60,7 +60,7 @@ final class RP_Admin_Settings {
 			'beskrivning_paket1' => sanitize_textarea_field( (string) ( $input['beskrivning_paket1'] ?? $d['beskrivning_paket1'] ) ),
 			'beskrivning_paket2' => sanitize_textarea_field( (string) ( $input['beskrivning_paket2'] ?? $d['beskrivning_paket2'] ) ),
 			'notis_epost'        => sanitize_email( (string) ( $input['notis_epost'] ?? '' ) ),
-			'krav_bekraftelse'   => empty( $input['krav_bekraftelse'] ) ? 0 : 1,
+			'krav_epost'         => empty( $input['krav_epost'] ) ? 0 : 1,
 			'lyft_sponsrade'     => empty( $input['lyft_sponsrade'] ) ? 0 : 1,
 			'omdomen_per_timme'  => max( 1, min( 100, absint( $input['omdomen_per_timme'] ?? $d['omdomen_per_timme'] ) ) ),
 		);
@@ -93,7 +93,7 @@ final class RP_Admin_Settings {
 				<table class="form-table"><tbody>
 					<tr><th><label for="rp-min">Minsta antal omdömen (m)</label></th><td><input id="rp-min" type="number" min="1" max="100" name="<?php echo esc_attr( $name( 'min_omdomen' ) ); ?>" value="<?php echo (int) $s['min_omdomen']; ?>" class="small-text">
 						<p class="description">Krävs för att komma med i topp 10 och används som vikt i det Bayesianska betyget. Nuvarande snitt för alla företag (C): <?php echo esc_html( (string) get_option( 'rp_global_avg', '–' ) ); ?></p></td></tr>
-					<tr><th>E-postbekräftelse</th><td><label><input type="checkbox" name="<?php echo esc_attr( $name( 'krav_bekraftelse' ) ); ?>" value="1" <?php checked( $s['krav_bekraftelse'] ); ?>> Omdömen måste bekräftas via e-postlänk innan de går till granskning</label></td></tr>
+					<tr><th>E-post för omdömen</th><td><label><input type="checkbox" name="<?php echo esc_attr( $name( 'krav_epost' ) ); ?>" value="1" <?php checked( $s['krav_epost'] ); ?>> Kräv e-post och bekräftelse via e-postlänk</label><p class="description">Avstängt (standard): e-post är valfritt och omdömet går direkt till granskning. Samma besökare kan inte betygsätta samma företag igen inom <?php echo (int) RP_Ratings::REPEAT_DAYS; ?> dagar.</p></td></tr>
 					<tr><th><label for="rp-rate">Max omdömen per besökare och timme</label></th><td><input id="rp-rate" type="number" min="1" max="100" name="<?php echo esc_attr( $name( 'omdomen_per_timme' ) ); ?>" value="<?php echo (int) $s['omdomen_per_timme']; ?>" class="small-text"></td></tr>
 				</tbody></table>
 				<h2>Paket</h2>
