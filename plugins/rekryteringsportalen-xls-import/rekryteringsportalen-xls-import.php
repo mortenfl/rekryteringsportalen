@@ -3,7 +3,7 @@
  * Plugin Name:       Rekryteringsportalen XLS-import
  * Plugin URI:        https://www.rekryteringsportalen.se
  * Description:       Importera rekryteringsföretag från Excel-filer (.xlsx, .xlsm och .xls). Använder samma kolumnkoppling, förhandsgranskning och dubblettkontroll som den vanliga importen.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 6.6
  * Requires PHP:      8.1
  * Requires Plugins:  rekryteringsportalen-core
@@ -16,7 +16,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'RP_XLS_VERSION', '1.0.0' );
+define( 'RP_XLS_VERSION', '1.1.0' );
 define( 'RP_XLS_URL', plugin_dir_url( __FILE__ ) );
 
 require_once __DIR__ . '/includes/class-rp-spreadsheet.php';

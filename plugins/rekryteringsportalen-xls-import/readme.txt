@@ -2,7 +2,7 @@
 Requires at least: 6.6
 Requires PHP: 8.1
 Requires Plugins: rekryteringsportalen-core
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 
 Importera rekryteringsföretag från Excel-filer (.xlsx, .xlsm, .xls).

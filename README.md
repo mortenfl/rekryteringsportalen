@@ -330,6 +330,12 @@ composer install
 ```
 
 ```bash
+bin/build-zips.sh
+```
+
+Skriptet bygger installerbara zip-filer i `dist/`, namngivna efter versionen i respektive plugin och tema, t.ex. `rekryteringsportalen-core-1.2.0.zip`. Ändringar per version finns i [CHANGELOG.md](CHANGELOG.md).
+
+```bash
 composer test
 ```
 
