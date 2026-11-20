@@ -40,7 +40,7 @@ while ( have_posts() ) {
 	<?php if ( ! $rp_companies && ! $rp_jobs && ! $rp_other ) : ?>
 		<div class="rp-empty">
 			<p><?php esc_html_e( 'Inga träffar. Prova ett annat sökord eller bläddra bland alla företag.', 'rekryteringsportalen' ); ?></p>
-			<p><a class="rp-button rp-button--outline" href="<?php echo esc_url( home_url( '/foretag/' ) ); ?>"><?php esc_html_e( 'Alla rekryteringsföretag', 'rekryteringsportalen' ); ?></a></p>
+			<p><a class="rp-button rp-button--outline" href="<?php echo esc_url( home_url( '/foretag/' ) ); ?>"><?php esc_html_e( 'Alla rekryteringsföretag', 'rekryteringsportalen' ); ?></a> <a class="rp-button rp-button--outline" href="<?php echo esc_url( rp_page_url( 'lagg-till-foretag' ) ); ?>"><?php esc_html_e( 'Lägg till ett företag gratis', 'rekryteringsportalen' ); ?></a></p>
 		</div>
 	<?php endif; ?>
 

@@ -43,6 +43,7 @@ while ( have_posts() ) :
 		<div class="container">
 			<h1 class="page-title"><?php the_title(); ?></h1>
 			<div class="page-lead"><?php the_content(); ?></div>
+			<p class="rp-add-cta"><?php esc_html_e( 'Inte med på listan än? Grundpresentationen är alltid gratis.', 'rekryteringsportalen' ); ?> <a href="<?php echo esc_url( rp_page_url( 'lagg-till-foretag' ) ); ?>"><?php esc_html_e( 'Lägg till ert företag →', 'rekryteringsportalen' ); ?></a></p>
 		</div>
 	</section>
 

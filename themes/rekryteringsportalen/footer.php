@@ -31,6 +31,7 @@ $rp_url = static function ( string $slug ): string {
 			<h2 class="site-footer__title"><?php esc_html_e( 'För företag', 'rekryteringsportalen' ); ?></h2>
 			<ul>
 				<li><a href="<?php echo esc_url( $rp_url( 'hitta-rekryterare' ) ); ?>">Hitta en rekryterare</a></li>
+				<li><a href="<?php echo esc_url( $rp_url( 'lagg-till-foretag' ) ); ?>">Lägg till ditt företag gratis</a></li>
 				<li><a href="<?php echo esc_url( $rp_url( 'for-foretag' ) ); ?>">Annonspaket för rekryteringsföretag</a></li>
 			</ul>
 		</nav>

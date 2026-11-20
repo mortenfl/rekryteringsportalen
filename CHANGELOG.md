@@ -2,6 +2,14 @@
 
 ## Rekryteringsportalen Core
 
+### 1.4.0
+- **Lägg till ditt företag gratis.** Ny sida `/lagg-till-foretag/` (shortcode `[rp_anmal_foretag]`) där rekryteringsföretag som saknas kan anmäla sig själva:
+  - Företaget sparas som *Väntar på granskning* med källan "anmälan". Admin får ett mejl och kontaktpersonen en bekräftelse.
+  - Dubbletter fångas på org.nr, domän och namn. Finns företaget redan visas en länk till det.
+  - När admin publicerar företaget får kontaktpersonen automatiskt ett mejl med länk till sidan och till annonspaketen. Därefter raderas kontaktuppgifterna. Opublicerade anmälningar rensas efter 90 dagar.
+  - Rutan *Anmälan* i företagets redigeringsvy visar vem som anmälde.
+- Rättat: termnamn med `&amp;` (t.ex. "Teknik &amp; Ingenjör") delades vid `;` och blev två felaktiga termer.
+
 ### 1.3.1
 - Rättat: knappen "Uppgradera" på företagssidor gav 404. Länken använde parametern `?foretag=`, som krockar med företagstypens query var. Nu används `?uppgradera=`, och gamla länkar skickas vidare automatiskt (301).
 
@@ -44,6 +52,11 @@
 - Första versionen: import från `.xlsx`, `.xlsm` och `.xls`.
 
 ## Tema Rekryteringsportalen
+
+### 1.2.0
+- Rättat: sidnumreringen under företagslistan låg på höjden. Nu står den på en rad.
+- Länkar till "Lägg till ditt företag gratis" på företagslistan, säljsidan, i sidfoten och vid sökningar utan träffar.
+- Stil för kryssrutor i formulär. Menylänkar bryts inte längre över två rader.
 
 ### 1.1.2
 - Knappen "Uppgradera" länkar till `/for-foretag/?uppgradera=<id>#bestall`, så att beställningsformuläret öppnas med företaget förifyllt.

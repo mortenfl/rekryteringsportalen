@@ -22,6 +22,7 @@ $rp_new = RP_Query::new_companies_count( 30 );
 				<a href="<?php echo esc_url( add_query_arg( 'sortera', 'nyast', (string) get_post_type_archive_link( RP_Post_Types::COMPANY ) ) ); ?>"><?php esc_html_e( 'Visa nyaste', 'rekryteringsportalen' ); ?></a>
 			</p>
 		<?php endif; ?>
+		<p class="rp-add-cta"><?php esc_html_e( 'Saknas ditt rekryteringsföretag?', 'rekryteringsportalen' ); ?> <a href="<?php echo esc_url( rp_page_url( 'lagg-till-foretag' ) ); ?>"><?php esc_html_e( 'Lägg till det gratis →', 'rekryteringsportalen' ); ?></a></p>
 	</header>
 
 	<div class="layout-sidebar">

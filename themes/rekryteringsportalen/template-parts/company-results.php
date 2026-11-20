@@ -28,7 +28,7 @@ $rp_total = (int) $wp_query->found_posts;
 	<?php else : ?>
 		<div class="rp-empty">
 			<p><?php esc_html_e( 'Inga rekryteringsföretag matchar dina filter.', 'rekryteringsportalen' ); ?></p>
-			<p><a href="<?php echo esc_url( (string) get_post_type_archive_link( RP_Post_Types::COMPANY ) ); ?>"><?php esc_html_e( 'Visa alla företag', 'rekryteringsportalen' ); ?></a></p>
+			<p><a href="<?php echo esc_url( (string) get_post_type_archive_link( RP_Post_Types::COMPANY ) ); ?>"><?php esc_html_e( 'Visa alla företag', 'rekryteringsportalen' ); ?></a> · <a href="<?php echo esc_url( rp_page_url( 'lagg-till-foretag' ) ); ?>"><?php esc_html_e( 'Saknas ett företag? Lägg till det gratis', 'rekryteringsportalen' ); ?></a></p>
 		</div>
 	<?php endif; ?>
 </div>

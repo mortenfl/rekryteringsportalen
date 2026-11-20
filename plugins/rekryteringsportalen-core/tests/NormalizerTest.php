@@ -72,6 +72,7 @@ final class NormalizerTest extends TestCase {
 	public function test_list(): void {
 		$this->assertSame( array( 'IT', 'Ekonomi', 'Teknik', 'Vård' ), RP_Normalizer::list( 'IT, Ekonomi; Teknik|Vård, IT' ) );
 		$this->assertSame( array(), RP_Normalizer::list( '' ) );
+		$this->assertSame( array( 'Teknik & Ingenjör', 'IT & Tech' ), RP_Normalizer::list( 'Teknik &amp; Ingenjör, IT &amp; Tech' ), 'HTML entities are not split at ";"' );
 		$this->assertSame( array( 'A', 'B' ), RP_Normalizer::list( array( ' A ', 'B', '' ) ) );
 	}
 

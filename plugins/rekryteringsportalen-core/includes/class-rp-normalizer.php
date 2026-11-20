@@ -91,7 +91,8 @@ final class RP_Normalizer {
 		if ( is_array( $value ) ) {
 			$parts = $value;
 		} else {
-			$parts = preg_split( '/\s*[,;|]\s*/', (string) $value );
+			// Decode entities first: "Teknik &amp; Ingenjör" must not be split at the ";".
+			$parts = preg_split( '/\s*[,;|]\s*/', html_entity_decode( (string) $value, ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
 		}
 		$parts = array_map( 'trim', array_map( 'strval', $parts ) );
 		return array_values( array_unique( array_filter( $parts, 'strlen' ) ) );

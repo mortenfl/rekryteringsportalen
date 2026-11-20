@@ -57,6 +57,7 @@ wp rp seed-demo --delete
 | `/jobb/` | `archive-jobb.php` | Lediga jobb med filter |
 | `/jobbportaler/` | `archive-jobbportal.php` | Jobbportaler grupperade per kategori |
 | `/hitta-rekryterare/` | `page-hitta-rekryterare.php` | Leadsformulär för företag som ska rekrytera |
+| `/lagg-till-foretag/` | `page.php` + `[rp_anmal_foretag]` | Formulär där företag som saknas kan lägga till sig gratis (granskas innan publicering) |
 | `/for-foretag/` | `page-for-foretag.php` | Säljsida med paketen, jämförelsetabell, FAQ och beställningsformulär |
 
 Filtren på `/foretag/` och `/jobb/` är vanliga GET-formulär och fungerar utan JavaScript. Med JavaScript uppdateras resultaten direkt och URL:en ändras, så att filtrerade vyer går att dela.
@@ -281,6 +282,7 @@ add_action( 'rp_paketorder_created', function ( int $order_id ) { /* skapa faktu
 | `[rp_paket]` | De två paketkorten |
 | `[rp_paketformular paket="paket1"]` | Beställningsformulär |
 | `[rp_lead_formular]` | Leadsformulär |
+| `[rp_anmal_foretag]` | Formulär för att lägga till ett företag gratis |
 
 ## REST API (`/wp-json/rp/v1/`)
 

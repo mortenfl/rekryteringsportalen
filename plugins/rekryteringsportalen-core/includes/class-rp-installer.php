@@ -182,6 +182,10 @@ final class RP_Installer {
 				'title'   => 'För rekryteringsföretag',
 				'content' => '<!-- wp:paragraph --><p>Syns där kandidater och kunder jämför rekryteringsföretag. Välj det paket som passar er.</p><!-- /wp:paragraph -->',
 			),
+			'lagg-till-foretag'   => array(
+				'title'   => 'Lägg till ditt företag',
+				'content' => '<!-- wp:paragraph --><p>Saknas ert rekryterings- eller bemanningsföretag på Rekryteringsportalen? Fyll i formuläret så lägger vi till er – grundpresentationen är alltid gratis.</p><!-- /wp:paragraph --><!-- wp:shortcode -->[rp_anmal_foretag]<!-- /wp:shortcode -->',
+			),
 			'riktlinjer-omdomen'  => array(
 				'title'   => 'Riktlinjer för omdömen',
 				'content' => '<!-- wp:heading --><h2>Så skriver du ett bra omdöme</h2><!-- /wp:heading --><!-- wp:list --><ul><li>Berätta om din egen upplevelse – som kandidat, kund eller anställd.</li><li>Var saklig och konkret. Beskriv vad som var bra och vad som kunde varit bättre.</li><li>Nämn inte privatpersoner vid namn och skriv inga personangrepp.</li><li>Ett omdöme per person och företag.</li><li>Lämna inte omdömen om ditt eget företag eller en konkurrent.</li></ul><!-- /wp:list --><!-- wp:paragraph --><p>Alla omdömen granskas innan de publiceras. Omdömen som bryter mot riktlinjerna publiceras inte. Ser du ett omdöme som bryter mot riktlinjerna kan du rapportera det.</p><!-- /wp:paragraph -->',
