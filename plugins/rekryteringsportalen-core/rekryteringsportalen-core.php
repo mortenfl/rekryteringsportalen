@@ -3,7 +3,7 @@
  * Plugin Name:       Rekryteringsportalen Core
  * Plugin URI:        https://www.rekryteringsportalen.se
  * Description:       Data model and features for Rekryteringsportalen: recruitment companies, reviews, jobs, job portals, packages, leads and import.
- * Version:           1.2.0
+ * Version:           1.2.1
  * Requires at least: 6.6
  * Requires PHP:      8.1
  * Author:            Rekryteringsportalen
@@ -16,7 +16,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'RP_CORE_VERSION', '1.2.0' );
+define( 'RP_CORE_VERSION', '1.2.1' );
 define( 'RP_CORE_FILE', __FILE__ );
 define( 'RP_CORE_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RP_CORE_URL', plugin_dir_url( __FILE__ ) );

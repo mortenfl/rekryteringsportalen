@@ -71,8 +71,26 @@ final class RP_Installer {
 			self::schedule();
 			update_option( 'rp_core_version', RP_CORE_VERSION );
 			flush_rewrite_rules();
+			self::purge_page_cache();
 		}
 		self::schedule();
+	}
+
+	/**
+	 * Empty full-page caches so visitors see the new forms/markup right after an update.
+	 * Supports LiteSpeed Cache, WP Rocket, W3 Total Cache and WP Super Cache when present.
+	 */
+	public static function purge_page_cache(): void {
+		do_action( 'litespeed_purge_all' );
+		if ( function_exists( 'rocket_clean_domain' ) ) {
+			rocket_clean_domain();
+		}
+		if ( function_exists( 'w3tc_flush_all' ) ) {
+			w3tc_flush_all();
+		}
+		if ( function_exists( 'wp_cache_clear_cache' ) ) {
+			wp_cache_clear_cache();
+		}
 	}
 
 	/**

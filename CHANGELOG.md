@@ -2,6 +2,9 @@
 
 ## Rekryteringsportalen Core
 
+### 1.2.1
+- Tömmer sidcachen (LiteSpeed, WP Rocket, W3TC, WP Super Cache) automatiskt efter uppdatering och när inställningarna sparas, så att ändrade formulär syns direkt.
+
 ### 1.2.0
 - E-post är valfritt när man skriver ett omdöme, och ingen bekräftelselänk skickas som standard. Kan slås på igen under *Inställningar → Rekryteringsportalen*.
 - Samma besökare kan inte betygsätta samma företag igen inom 90 dagar. Kontrollen görs på en saltad IP-hash som raderas efter 90 dagar.
@@ -18,6 +21,9 @@
 - Första versionen.
 
 ## Rekryteringsportalen XLS-import
+
+### 1.2.0
+- Tog bort `Requires Plugins: rekryteringsportalen-core`. Det låste kärnpluginet så att det inte gick att inaktivera så länge XLS-importen var aktiv. Utan Core visar XLS-importen i stället ett meddelande i admin och gör ingenting.
 
 ### 1.1.0
 - Mall i `.xls`-format (Excel 97–2003) utöver `.xlsx`.

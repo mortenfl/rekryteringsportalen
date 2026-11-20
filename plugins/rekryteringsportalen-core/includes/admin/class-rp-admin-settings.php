@@ -73,6 +73,7 @@ final class RP_Admin_Settings {
 	 * @param mixed $new_value New.
 	 */
 	public static function after_save( $old_value, $new_value ): void {
+		RP_Installer::purge_page_cache(); // Forms depend on these settings (e.g. e-mail field).
 		if ( ( $old_value['min_omdomen'] ?? null ) !== ( $new_value['min_omdomen'] ?? null ) ) {
 			RP_Ratings::recalc_all();
 		}

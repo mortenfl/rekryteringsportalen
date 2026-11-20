@@ -1,15 +1,14 @@
 === Rekryteringsportalen XLS-import ===
 Requires at least: 6.6
 Requires PHP: 8.1
-Requires Plugins: rekryteringsportalen-core
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 
 Importera rekryteringsföretag från Excel-filer (.xlsx, .xlsm, .xls).
 
 == Beskrivning ==
 
-Tillägg till Rekryteringsportalen Core. Gör att importen under Rekryteringsföretag → Importera företag
+Tillägg till Rekryteringsportalen Core (måste vara aktivt för att importen ska fungera, men låser inte Core – Core kan inaktiveras när som helst). Gör att importen under Rekryteringsföretag → Importera företag
 (och `wp rp import`) även tar emot Excel-filer.
 
 * .xlsx/.xlsm (Excel 2007 och senare) och .xls (Excel 97–2003).
