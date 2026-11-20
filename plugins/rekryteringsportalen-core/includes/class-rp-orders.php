@@ -49,8 +49,9 @@ final class RP_Orders {
 	public static function shortcode( $atts = array() ): string {
 		$atts     = shortcode_atts( array( 'paket' => '' ), $atts );
 		$selected = isset( $_GET['paket'] ) ? sanitize_key( wp_unslash( $_GET['paket'] ) ) : $atts['paket']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$claim    = isset( $_GET['foretag'] ) ? absint( $_GET['foretag'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$claim    = $claim && RP_Post_Types::COMPANY === get_post_type( $claim ) ? $claim : 0;
+		// "uppgradera" (not "foretag": that is the company post type's query var and would make WordPress look for a company and return 404).
+		$claim = isset( $_GET['uppgradera'] ) ? absint( $_GET['uppgradera'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$claim = $claim && RP_Post_Types::COMPANY === get_post_type( $claim ) ? $claim : 0;
 
 		ob_start();
 		echo RP_Forms::notice( 'order' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

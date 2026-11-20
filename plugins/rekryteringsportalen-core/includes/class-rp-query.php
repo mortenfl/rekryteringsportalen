@@ -22,6 +22,28 @@ final class RP_Query {
 		add_filter( 'query_vars', array( self::class, 'query_vars' ) );
 		add_action( 'pre_get_posts', array( self::class, 'pre_get_posts' ) );
 		add_action( 'template_redirect', array( self::class, 'redirect_portal_singles' ) );
+		add_filter( 'request', array( self::class, 'legacy_upgrade_links' ) );
+	}
+
+	/**
+	 * Old "Uppgradera" links used ?foretag=<id> on a page. "foretag" is the company post type's
+	 * query var, so WordPress looked for a company with that slug and returned 404. Send such
+	 * requests to the page with ?uppgradera=<id> instead.
+	 *
+	 * @param array<string, mixed> $vars Query vars.
+	 * @return array<string, mixed>
+	 */
+	public static function legacy_upgrade_links( $vars ): array {
+		$vars = (array) $vars;
+		if ( ! empty( $vars['pagename'] ) && isset( $vars[ RP_Post_Types::COMPANY ] ) && ctype_digit( (string) $vars[ RP_Post_Types::COMPANY ] ) && ! is_admin() ) {
+			$id   = (int) $vars[ RP_Post_Types::COMPANY ];
+			$page = get_page_by_path( (string) $vars['pagename'] );
+			if ( $page ) {
+				wp_safe_redirect( add_query_arg( 'uppgradera', $id, (string) get_permalink( $page ) ) . '#bestall', 301 );
+				exit;
+			}
+		}
+		return $vars;
 	}
 
 	/**

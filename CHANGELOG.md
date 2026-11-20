@@ -2,6 +2,9 @@
 
 ## Rekryteringsportalen Core
 
+### 1.3.1
+- Rättat: knappen "Uppgradera" på företagssidor gav 404. Länken använde parametern `?foretag=`, som krockar med företagstypens query var. Nu används `?uppgradera=`, och gamla länkar skickas vidare automatiskt (301).
+
 ### 1.3.0
 - **Ångra import.** Varje import får ett import-ID. Under *Importera företag → Importlogg → Ångra…* (eller med `wp rp undo-import <id>`) kan en hel import ångras:
   - Företag som importen skapade flyttas till papperskorgen tillsammans med sina jobb.
@@ -41,6 +44,9 @@
 - Första versionen: import från `.xlsx`, `.xlsm` och `.xls`.
 
 ## Tema Rekryteringsportalen
+
+### 1.1.2
+- Knappen "Uppgradera" länkar till `/for-foretag/?uppgradera=<id>#bestall`, så att beställningsformuläret öppnas med företaget förifyllt.
 
 ### 1.1.1
 - Rättat: i rutan "Liknande företag" på företagssidan stod stjärnorna under varandra. Nu ligger de på en rad, med betyg och antal omdömen (eller "Inga omdömen ännu").

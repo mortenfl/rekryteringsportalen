@@ -9,7 +9,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'RP_THEME_VERSION', '1.1.1' );
+define( 'RP_THEME_VERSION', '1.1.2' );
 
 /**
  * Whether the companion plugin is active.

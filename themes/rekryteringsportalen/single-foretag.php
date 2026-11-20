@@ -270,7 +270,7 @@ while ( have_posts() ) :
 					<div class="side-card side-card--claim">
 						<h2 class="side-card__title"><?php esc_html_e( 'Är detta ditt företag?', 'rekryteringsportalen' ); ?></h2>
 						<p><?php esc_html_e( 'Gör anspråk på sidan och uppgradera till en utökad presentation med bilder, team, kundcase och möjlighet att svara på omdömen.', 'rekryteringsportalen' ); ?></p>
-						<a class="rp-button rp-button--primary rp-button--block" href="<?php echo esc_url( add_query_arg( 'foretag', $rp_id, rp_page_url( 'for-foretag' ) ) . '#bestall' ); ?>"><?php esc_html_e( 'Uppgradera', 'rekryteringsportalen' ); ?></a>
+						<a class="rp-button rp-button--primary rp-button--block" href="<?php echo esc_url( add_query_arg( 'uppgradera', $rp_id, rp_page_url( 'for-foretag' ) ) . '#bestall' ); ?>"><?php esc_html_e( 'Uppgradera', 'rekryteringsportalen' ); ?></a>
 					</div>
 
 					<?php
