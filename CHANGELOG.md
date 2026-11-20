@@ -42,6 +42,9 @@
 
 ## Tema Rekryteringsportalen
 
+### 1.1.1
+- Rättat: i rutan "Liknande företag" på företagssidan stod stjärnorna under varandra. Nu ligger de på en rad, med betyg och antal omdömen (eller "Inga omdömen ännu").
+
 ### 1.1.0
 - Topp 10 i två kolumner. Bottenlistan är borttagen.
 - Rättat: punktlistan i Paket 2 och samtyckesrutans radbrytning.

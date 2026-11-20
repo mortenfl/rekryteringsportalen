@@ -300,8 +300,8 @@ while ( have_posts() ) :
 								<?php foreach ( $rp_similar as $rp_s ) : ?>
 									<li>
 										<?php echo rp_company_logo( $rp_s->ID ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-										<span><a href="<?php echo esc_url( (string) get_permalink( $rp_s ) ); ?>"><?php echo esc_html( get_the_title( $rp_s ) ); ?></a>
-										<?php echo rp_stars( (float) get_post_meta( $rp_s->ID, 'rp_snittbetyg', true ), 'sm' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+										<div class="mini-list__body"><a href="<?php echo esc_url( (string) get_permalink( $rp_s ) ); ?>"><?php echo esc_html( get_the_title( $rp_s ) ); ?></a>
+										<?php echo rp_rating_badge( $rp_s->ID, 'sm' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
 									</li>
 								<?php endforeach; ?>
 							</ul>
