@@ -140,6 +140,24 @@ final class RP_Rest {
 
 		register_rest_route(
 			self::NS,
+			'/import/(?P<batch>\d{8}-\d{6}-[a-z0-9]{6})/undo',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( self::class, 'undo_import' ),
+				'permission_callback' => static function () {
+					return current_user_can( 'manage_options' );
+				},
+				'args'                => array(
+					'dry_run' => array(
+						'type'    => 'boolean',
+						'default' => false,
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NS,
 			'/klick/(?P<id>\d+)',
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
@@ -261,6 +279,15 @@ final class RP_Rest {
 			'rest'
 		);
 		return new WP_REST_Response( $summary, 200 );
+	}
+
+	/**
+	 * Undo an import batch.
+	 *
+	 * @param WP_REST_Request $r Request.
+	 */
+	public static function undo_import( WP_REST_Request $r ): WP_REST_Response {
+		return new WP_REST_Response( RP_Import_Undo::undo( (string) $r['batch'], (bool) $r['dry_run'] ) );
 	}
 
 	/**

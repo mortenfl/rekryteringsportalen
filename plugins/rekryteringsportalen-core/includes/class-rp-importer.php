@@ -410,8 +410,8 @@ final class RP_Importer {
 	/**
 	 * Create or update a company.
 	 *
-	 * @param array<string,string|string[]>                         $data    Mapped data (column keys).
-	 * @param array{status?:string, overwrite?:bool, dry_run?:bool} $options Options.
+	 * @param array<string,string|string[]>                                        $data    Mapped data (column keys).
+	 * @param array{status?:string, overwrite?:bool, dry_run?:bool, batch?:string} $options Options. `batch` records the change so the import can be undone.
 	 * @return array{id:int, action:string, message:string}
 	 */
 	public static function upsert_company( array $data, array $options = array() ): array {
@@ -421,6 +421,7 @@ final class RP_Importer {
 				'status'    => 'draft',
 				'overwrite' => false,
 				'dry_run'   => false,
+				'batch'     => '',
 			)
 		);
 		$data    = array_map(
@@ -450,6 +451,9 @@ final class RP_Importer {
 				'message' => $id ? 'Matchar via ' . $found['by'] : 'Nytt företag',
 			);
 		}
+
+		// Remember the values before an update so the import can be undone.
+		$before = ( $id && '' !== $options['batch'] ) ? RP_Import_Undo::snapshot( $id ) : null;
 
 		$postarr = array(
 			'post_type' => RP_Post_Types::COMPANY,
@@ -522,6 +526,10 @@ final class RP_Importer {
 		}
 
 		RP_Post_Types::ensure_company_defaults( $id );
+
+		if ( '' !== $options['batch'] ) {
+			RP_Import_Undo::record( $id, (string) $options['batch'], $action, $before );
+		}
 
 		/**
 		 * Fires after a company has been imported.
@@ -652,10 +660,16 @@ final class RP_Importer {
 	 * @param array<int, array<string,string>> $rows    Mapped rows.
 	 * @param array<string, mixed>             $options Options for upsert_company.
 	 * @param string                           $source  Where the import came from (admin, cli, rest).
-	 * @return array{created:int, updated:int, skipped:int, errors:int, rows:array<int, array{row:int, namn:string, id:int, action:string, message:string}>}
+	 * @return array{batch:string, created:int, updated:int, skipped:int, errors:int, rows:array<int, array{row:int, namn:string, id:int, action:string, message:string}>}
 	 */
 	public static function import_rows( array $rows, array $options, string $source ): array {
+		if ( empty( $options['dry_run'] ) ) {
+			$options['batch'] = RP_Import_Undo::new_batch();
+		} else {
+			unset( $options['batch'] );
+		}
 		$summary = array(
+			'batch'   => (string) ( $options['batch'] ?? '' ),
 			'created' => 0,
 			'updated' => 0,
 			'skipped' => 0,
@@ -701,6 +715,7 @@ final class RP_Importer {
 			array_unshift(
 				$log,
 				array(
+					'batch'   => $summary['batch'],
 					'time'    => current_time( 'mysql' ),
 					'user'    => get_current_user_id(),
 					'source'  => $source,

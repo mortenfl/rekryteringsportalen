@@ -127,6 +127,31 @@ CSV-filen får använda semikolon, komma eller tab som avgränsare, och Excel-fi
 | `paket`, `paket_giltigt_till`, `leads_epost` | paket1, 2027-12-31 |
 | `kalla` | var företaget upptäcktes, t.ex. `crawler` |
 
+### Ångra en import
+
+Varje import får ett **import-ID**. Under *Rekryteringsföretag → Importera företag* finns importloggen längst ner. Klicka på **Ångra…** vid en import, eller använd länken direkt efter en import. Då ser du först en förhandsgranskning, och inget ändras förrän du bekräftar.
+
+| Företaget … | Vid ångra |
+|---|---|
+| skapades av importen | Flyttas till papperskorgen tillsammans med sina jobb (kan återställas därifrån) |
+| uppdaterades av importen | Återställs till värdena före importen: namn, beskrivning, alla fält, logotyp, tjänster/branscher/regioner och paket |
+| har ändrats efter importen (för hand, av en senare import, paket aktiverat/utgånget …) | Hoppas över och listas, så att inget arbete går förlorat |
+| skapades av importen men har fått omdömen | Hoppas över och listas |
+
+```bash
+wp rp import-log
+```
+
+```bash
+wp rp undo-import 20261120-153012-a1b2c3 --dry-run
+```
+
+```bash
+wp rp undo-import 20261120-153012-a1b2c3
+```
+
+Funktionen gäller importer som gjorts med version 1.3.0 eller senare. Äldre importer saknar import-ID.
+
 ### Excel (.xlsx och .xls)
 
 Aktivera tillägget **Rekryteringsportalen XLS-import**. Då tar importsidan och `wp rp import` även emot Excel-filer:
@@ -265,6 +290,7 @@ add_action( 'rp_paketorder_created', function ( int $order_id ) { /* skapa faktu
 | GET | `topplista?antal=10&taxonomi=bransch&term=it-tech` | Publik |
 | POST | `import?status=draft&overwrite=false&dry_run=false` | `manage_options` |
 | POST | `foretag/{id}/paket` | `edit_post` |
+| POST | `import/{import-id}/undo?dry_run=true` | `manage_options` |
 | POST | `klick/{id}` | Publik (räknar klick på jobbportaler) |
 
 ## WP-CLI
@@ -286,6 +312,14 @@ wp rp recalc
 ```
 
 ```bash
+wp rp import-log
+```
+
+```bash
+wp rp undo-import <import-id> [--dry-run] [--yes]
+```
+
+```bash
 wp rp import-jobb
 ```
 
@@ -301,6 +335,7 @@ wp rp seed-demo [--delete]
 | `rp_paketorder_created( $order_id )` | action | Koppla på betalning |
 | `rp_lead_created( $lead_id, $recipients )` | action | Efter att ett lead skickats |
 | `rp_company_imported( $id, $action, $data )` | action | Efter import av ett företag |
+| `rp_import_undone( $batch, $result )` | action | Efter att en import har ångrats |
 | `rp_package_includes_extended` | filter | Om Paket 2 även ska innehålla Paket 1 (standard `true`) |
 | `rp_output_schema` | filter | Stäng av JSON-LD |
 | `rp_import_extensions` | filter | Filändelser som importen tar emot |

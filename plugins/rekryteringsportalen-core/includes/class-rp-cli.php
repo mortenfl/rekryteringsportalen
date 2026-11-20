@@ -82,6 +82,9 @@ class RP_CLI {
 		WP_CLI\Utils\format_items( 'table', $summary['rows'], array( 'row', 'namn', 'action', 'id', 'message' ) );
 		$prefix = isset( $assoc_args['dry-run'] ) ? 'Torrkörning: ' : '';
 		WP_CLI::success( sprintf( '%s%d skapade, %d uppdaterade, %d hoppade över, %d fel.', $prefix, $summary['created'], $summary['updated'], $summary['skipped'], $summary['errors'] ) );
+		if ( '' !== $summary['batch'] ) {
+			WP_CLI::log( sprintf( 'Import-ID: %1$s  (ångra med: wp rp undo-import %1$s)', $summary['batch'] ) );
+		}
 	}
 
 	/**
@@ -210,5 +213,70 @@ class RP_CLI {
 		RP_Installer::seed_portals();
 		$res = RP_Seeder::seed();
 		WP_CLI::success( sprintf( 'Skapade %d företag, %d jobb och %d omdömen.', $res['companies'], $res['jobs'], $res['reviews'] ) );
+	}
+
+	/**
+	 * Undo an import: companies it created are trashed (with their jobs), companies it updated are
+	 * restored to their previous values. Companies changed since the import, or created companies that
+	 * have received reviews, are skipped.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <batch>
+	 * : Import ID (shown after the import and by `wp rp import-log`).
+	 *
+	 * [--dry-run]
+	 * : Show what would happen without changing anything.
+	 *
+	 * [--yes]
+	 * : Do not ask for confirmation.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp rp undo-import 20261120-153012-a1b2c3 --dry-run
+	 *
+	 * @subcommand undo-import
+	 *
+	 * @param string[]             $args       Positional.
+	 * @param array<string,string> $assoc_args Named.
+	 */
+	public function undo_import( array $args, array $assoc_args ): void {
+		$batch = $args[0];
+		if ( ! RP_Import_Undo::is_valid_batch( $batch ) ) {
+			WP_CLI::error( "Ogiltigt import-ID: $batch" );
+		}
+		$dry     = isset( $assoc_args['dry-run'] );
+		$preview = RP_Import_Undo::undo( $batch, true );
+		if ( ! $preview['rows'] ) {
+			WP_CLI::error( 'Inga företag från den här importen finns kvar att ångra.' );
+		}
+		WP_CLI\Utils\format_items( 'table', $preview['rows'], array( 'id', 'namn', 'action', 'message' ) );
+		if ( $dry ) {
+			WP_CLI::success( sprintf( 'Torrkörning: %d tas bort, %d återställs, %d hoppas över.', $preview['trashed'], $preview['restored'], $preview['skipped'] ) );
+			return;
+		}
+		WP_CLI::confirm( sprintf( 'Ångra importen? %d företag påverkas.', $preview['trashed'] + $preview['restored'] ), $assoc_args );
+		$result = RP_Import_Undo::undo( $batch );
+		WP_CLI::success( sprintf( '%d flyttades till papperskorgen, %d återställdes, %d hoppades över.', $result['trashed'], $result['restored'], $result['skipped'] ) );
+	}
+
+	/**
+	 * List recent imports with their import IDs.
+	 *
+	 * @subcommand import-log
+	 */
+	public function import_log(): void {
+		$items = array();
+		foreach ( (array) get_option( 'rp_import_log', array() ) as $e ) {
+			$items[] = array(
+				'import_id'   => $e['batch'] ?? '–',
+				'tid'         => $e['time'] ?? '',
+				'kalla'       => $e['source'] ?? '',
+				'skapade'     => $e['created'] ?? 0,
+				'uppdaterade' => $e['updated'] ?? 0,
+				'angrad'      => empty( $e['undone'] ) ? '' : $e['undone']['time'],
+			);
+		}
+		WP_CLI\Utils\format_items( 'table', $items, array( 'import_id', 'tid', 'kalla', 'skapade', 'uppdaterade', 'angrad' ) );
 	}
 }

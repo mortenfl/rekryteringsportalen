@@ -2,6 +2,15 @@
 
 ## Rekryteringsportalen Core
 
+### 1.3.0
+- **Ångra import.** Varje import får ett import-ID. Under *Importera företag → Importlogg → Ångra…* (eller med `wp rp undo-import <id>`) kan en hel import ångras:
+  - Företag som importen skapade flyttas till papperskorgen tillsammans med sina jobb.
+  - Företag som importen uppdaterade återställs till sina tidigare värden (namn, beskrivning, fält, logotyp, tjänster/branscher/regioner och paket).
+  - Företag som har ändrats efter importen hoppas över och listas, liksom skapade företag som har fått omdömen.
+- Förhandsgranskning innan något ändras. Fungerar för importer gjorda från version 1.3.0.
+- Nya kommandon: `wp rp undo-import` och `wp rp import-log`. Ny REST-route: `POST rp/v1/import/{id}/undo`. Ny hook: `rp_import_undone`.
+- Integrationstest mot riktig WordPress: `tests/integration/import-undo-check.php`.
+
 ### 1.2.1
 - Tömmer sidcachen (LiteSpeed, WP Rocket, W3TC, WP Super Cache) automatiskt efter uppdatering och när inställningarna sparas, så att ändrade formulär syns direkt.
 

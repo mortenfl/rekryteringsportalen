@@ -23,6 +23,7 @@ final class RP_Admin_Import {
 		add_action( 'admin_post_rp_import_upload', array( self::class, 'handle_upload' ) );
 		add_action( 'admin_post_rp_import_map', array( self::class, 'handle_map' ) );
 		add_action( 'admin_post_rp_import_run', array( self::class, 'handle_run' ) );
+		add_action( 'admin_post_rp_import_undo', array( self::class, 'handle_undo' ) );
 	}
 
 	/**
@@ -245,6 +246,7 @@ final class RP_Admin_Import {
 			'url'   => 'Kunde inte hämta filen från URL:en.',
 			'empty' => 'Hittade inga rader i filen. Kontrollera att första raden innehåller kolumnnamn.',
 			'namn'  => 'Någon kolumn måste kopplas till fältet Namn.',
+			'batch' => 'Importen hittades inte eller kan inte ångras.',
 		);
 		$steps  = array(
 			''        => '1. Ladda upp',
@@ -253,12 +255,15 @@ final class RP_Admin_Import {
 			'done'    => '4. Klart',
 		);
 
-		echo '<div class="wrap"><h1>Importera rekryteringsföretag</h1>';
-		echo '<ol class="rp-import-steps">';
-		foreach ( $steps as $k => $label ) {
-			echo '<li class="' . ( $k === $step ? 'is-current' : '' ) . '">' . esc_html( $label ) . '</li>';
+		$undo_steps = in_array( $step, array( 'undo', 'undone' ), true );
+		echo '<div class="wrap"><h1>' . esc_html( $undo_steps ? 'Ångra import' : 'Importera rekryteringsföretag' ) . '</h1>';
+		if ( ! $undo_steps ) {
+			echo '<ol class="rp-import-steps">';
+			foreach ( $steps as $k => $label ) {
+				echo '<li class="' . ( $k === $step ? 'is-current' : '' ) . '">' . esc_html( $label ) . '</li>';
+			}
+			echo '</ol>';
 		}
-		echo '</ol>';
 		if ( 'parse' === $err ) {
 			$errors['parse'] = (string) get_transient( self::key() . '_error' );
 		}
@@ -274,6 +279,8 @@ final class RP_Admin_Import {
 			'map'     => self::render_map( $state ),
 			'preview' => self::render_preview( $state ),
 			'done'    => self::render_done(),
+			'undo'    => self::render_undo(),
+			'undone'  => self::render_undone(),
 			default   => self::render_upload(),
 		};
 		echo '</div>';
@@ -420,7 +427,11 @@ final class RP_Admin_Import {
 		}
 		echo '<div class="notice notice-success"><p>' . esc_html( sprintf( 'Importen är klar: %d skapade, %d uppdaterade, %d hoppade över, %d fel.', $summary['created'], $summary['updated'], $summary['skipped'], $summary['errors'] ) ) . '</p></div>';
 		self::rows_table( $summary['rows'] );
-		echo '<p><a class="button button-primary" href="' . esc_url( admin_url( 'edit.php?post_type=foretag&post_status=draft' ) ) . '">Granska nya utkast</a> <a class="button" href="' . esc_url( self::url() ) . '">Ny import</a></p>';
+		echo '<p><a class="button button-primary" href="' . esc_url( admin_url( 'edit.php?post_type=foretag&post_status=draft' ) ) . '">Granska nya utkast</a> <a class="button" href="' . esc_url( self::url() ) . '">Ny import</a>';
+		if ( ! empty( $summary['batch'] ) && ( $summary['created'] + $summary['updated'] ) > 0 ) {
+			echo ' <a class="button button-link-delete" href="' . esc_url( self::url( 'undo', array( 'batch' => $summary['batch'] ) ) ) . '">Ångra den här importen…</a>';
+		}
+		echo '</p><p class="description">Import-ID: <code>' . esc_html( (string) ( $summary['batch'] ?? '' ) ) . '</code></p>';
 	}
 
 	/**
@@ -431,11 +442,11 @@ final class RP_Admin_Import {
 		if ( ! is_array( $log ) || ! $log ) {
 			return;
 		}
-		echo '<div class="rp-card"><h2>Importlogg</h2><table class="widefat striped"><thead><tr><th>Tid</th><th>Källa</th><th>Användare</th><th>Skapade</th><th>Uppdaterade</th><th>Hoppade över</th><th>Fel</th></tr></thead><tbody>';
+		echo '<div class="rp-card"><h2>Importlogg</h2><table class="widefat striped"><thead><tr><th>Tid</th><th>Källa</th><th>Användare</th><th>Skapade</th><th>Uppdaterade</th><th>Hoppade över</th><th>Fel</th><th>Ångra</th></tr></thead><tbody>';
 		foreach ( $log as $i => $entry ) {
 			$user = get_userdata( (int) $entry['user'] );
 			printf(
-				'<tr><td><details><summary>%s</summary>%s</details></td><td>%s</td><td>%s</td><td>%d</td><td>%d</td><td>%d</td><td>%d</td></tr>',
+				'<tr><td><details><summary>%s</summary>%s</details></td><td>%s</td><td>%s</td><td>%d</td><td>%d</td><td>%d</td><td>%d</td><td>%s</td></tr>',
 				esc_html( $entry['time'] ),
 				self::rows_table( $entry['rows'], true ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				esc_html( $entry['source'] ),
@@ -443,10 +454,126 @@ final class RP_Admin_Import {
 				(int) $entry['created'],
 				(int) $entry['updated'],
 				(int) $entry['skipped'],
-				(int) $entry['errors']
+				(int) $entry['errors'],
+				self::undo_cell( $entry ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			);
 		}
 		echo '</tbody></table></div>';
+	}
+
+	/**
+	 * "Ångra" cell in the import log.
+	 *
+	 * @param array<string, mixed> $entry Log entry.
+	 */
+	private static function undo_cell( array $entry ): string {
+		if ( ! empty( $entry['undone'] ) ) {
+			$u = $entry['undone'];
+			return '<span class="rp-badge">Ångrad</span><br><small>' . esc_html( (string) $u['time'] ) . '<br>' . esc_html( sprintf( '%d borttagna, %d återställda, %d överhoppade', $u['trashed'], $u['restored'], $u['skipped'] ) ) . '</small>';
+		}
+		if ( empty( $entry['batch'] ) ) {
+			return '<span class="description" title="Importerad före version 1.3.0 – saknar import-ID.">–</span>';
+		}
+		if ( ( (int) $entry['created'] + (int) $entry['updated'] ) < 1 ) {
+			return '–';
+		}
+		return '<a class="button button-small" href="' . esc_url( self::url( 'undo', array( 'batch' => (string) $entry['batch'] ) ) ) . '">Ångra…</a>';
+	}
+
+	/**
+	 * Batch from the query string, validated.
+	 */
+	private static function requested_batch(): string {
+		$batch = isset( $_REQUEST['batch'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['batch'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- validated format; actions verify nonces.
+		return RP_Import_Undo::is_valid_batch( $batch ) ? $batch : '';
+	}
+
+	/**
+	 * Undo preview + confirmation.
+	 */
+	private static function render_undo(): void {
+		$batch = self::requested_batch();
+		$entry = '' !== $batch ? RP_Import_Undo::log_entry( $batch ) : null;
+		if ( '' === $batch || ( $entry && ! empty( $entry['undone'] ) ) ) {
+			echo '<div class="notice notice-error"><p>Importen hittades inte eller har redan ångrats.</p></div>';
+			self::render_log();
+			return;
+		}
+		$preview = RP_Import_Undo::undo( $batch, true );
+		$todo    = $preview['trashed'] + $preview['restored'];
+
+		echo '<div class="rp-card">';
+		if ( $entry ) {
+			echo '<p>Import <code>' . esc_html( $batch ) . '</code> från <strong>' . esc_html( (string) $entry['time'] ) . '</strong> (' . esc_html( (string) $entry['source'] ) . ').</p>';
+		}
+		echo '<p><strong>' . (int) $preview['trashed'] . '</strong> företag som importen skapade flyttas till papperskorgen (tillsammans med deras jobb), <strong>' . (int) $preview['restored'] . '</strong> företag som importen uppdaterade återställs till värdena före importen, och <strong>' . (int) $preview['skipped'] . '</strong> hoppas över.</p>';
+		echo '<p class="description">Företag som har ändrats efter importen, eller som har fått omdömen, rörs inte. Borttagna företag kan återställas från papperskorgen.</p>';
+		$labels = array(
+			'trashed'  => 'Tas bort',
+			'restored' => 'Återställs',
+			'skipped'  => 'Hoppas över',
+		);
+		echo '<table class="widefat striped rp-preview-table"><thead><tr><th>Företag</th><th>Åtgärd</th><th>Detaljer</th></tr></thead><tbody>';
+		foreach ( $preview['rows'] as $row ) {
+			$css = 'skipped' === $row['action'] ? 'skipped' : ( 'trashed' === $row['action'] ? 'error' : 'updated' );
+			echo '<tr><td><a href="' . esc_url( (string) get_edit_post_link( $row['id'] ) ) . '">' . esc_html( $row['namn'] ) . '</a></td><td class="rp-action-' . esc_attr( $css ) . '">' . esc_html( $labels[ $row['action'] ] ) . '</td><td>' . esc_html( $row['message'] ) . '</td></tr>';
+		}
+		if ( ! $preview['rows'] ) {
+			echo '<tr><td colspan="3">Inga företag från den här importen finns kvar att ångra.</td></tr>';
+		}
+		echo '</tbody></table>';
+
+		if ( $todo > 0 ) {
+			echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" style="margin-top:16px" onsubmit="return confirm(\'Ångra importen? ' . (int) $todo . ' företag påverkas.\');">';
+			echo '<input type="hidden" name="action" value="rp_import_undo"><input type="hidden" name="batch" value="' . esc_attr( $batch ) . '">';
+			wp_nonce_field( 'rp_import_undo_' . $batch );
+			echo '<a class="button" href="' . esc_url( self::url() ) . '">Avbryt</a> ';
+			echo '<button type="submit" class="button button-primary">Ångra importen (' . (int) $todo . ' företag)</button></form>';
+		} else {
+			echo '<p><a class="button" href="' . esc_url( self::url() ) . '">Tillbaka</a></p>';
+		}
+		echo '</div>';
+	}
+
+	/**
+	 * Run the undo.
+	 */
+	public static function handle_undo(): void {
+		$batch = self::requested_batch();
+		check_admin_referer( 'rp_import_undo_' . $batch );
+		if ( '' === $batch || ! current_user_can( self::CAP ) || ! current_user_can( 'delete_others_posts' ) ) {
+			wp_die( 'Behörighet saknas.' );
+		}
+		if ( function_exists( 'set_time_limit' ) ) {
+			set_time_limit( 600 ); // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- large imports.
+		}
+		$result = RP_Import_Undo::undo( $batch );
+		set_transient( self::key() . '_undone', $result, HOUR_IN_SECONDS );
+		wp_safe_redirect( self::url( 'undone' ) );
+		exit;
+	}
+
+	/**
+	 * Undo result.
+	 */
+	private static function render_undone(): void {
+		$result = get_transient( self::key() . '_undone' );
+		if ( ! is_array( $result ) ) {
+			self::render_upload();
+			return;
+		}
+		echo '<div class="notice notice-success"><p>' . esc_html( sprintf( 'Importen är ångrad: %d företag flyttades till papperskorgen, %d återställdes och %d hoppades över.', $result['trashed'], $result['restored'], $result['skipped'] ) ) . '</p></div>';
+		$labels = array(
+			'trashed'  => 'Borttaget',
+			'restored' => 'Återställt',
+			'skipped'  => 'Överhoppat',
+		);
+		echo '<table class="widefat striped rp-preview-table"><thead><tr><th>Företag</th><th>Resultat</th><th>Detaljer</th></tr></thead><tbody>';
+		foreach ( $result['rows'] as $row ) {
+			echo '<tr><td>' . esc_html( $row['namn'] ) . '</td><td>' . esc_html( $labels[ $row['action'] ] ) . '</td><td>' . esc_html( str_replace( array( 'Flyttas', 'Återställs', 'Hoppas' ), array( 'Flyttades', 'Återställdes', 'Hoppades' ), $row['message'] ) ) . '</td></tr>';
+		}
+		echo '</tbody></table>';
+		echo '<p><a class="button" href="' . esc_url( admin_url( 'edit.php?post_status=trash&post_type=' . RP_Post_Types::COMPANY ) ) . '">Visa papperskorgen</a> <a class="button" href="' . esc_url( self::url() ) . '">Till importen</a></p>';
 	}
 
 	/**
